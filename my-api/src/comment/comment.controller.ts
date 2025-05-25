@@ -2,8 +2,10 @@ import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Query, Pars
 import { CommentService } from './comment.service';
 import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
 import { CreateCommentDto, UpdateCommentDto } from './comment-dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 
-
+@ApiTags('comments')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('comments')
 export class CommentController {
@@ -11,11 +13,18 @@ export class CommentController {
 
     @Post()
     @UsePipes(new ValidationPipe({ transform: true }))
+    @ApiOperation({ summary: 'Create a new comment' })
+    @ApiResponse({ status: 201, description: 'Comment successfully created.' })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
     create(@Body() createCommentDto: CreateCommentDto) {
         return this.commentService.create(createCommentDto);
     }
 
     @Get()
+    @ApiOperation({ summary: 'Get all comments with pagination' })
+    @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number' })
+    @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page' })
+    @ApiResponse({ status: 200, description: 'Return all comments.' })
     findAll(
         @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
@@ -24,17 +33,26 @@ export class CommentController {
     }
 
     @Get(':id')
+    @ApiOperation({ summary: 'Get comment by ID' })
+    @ApiResponse({ status: 200, description: 'Return comment by ID.' })
+    @ApiResponse({ status: 404, description: 'Comment not found.' })
     findOne(@Param('id') id: string) {
         return this.commentService.findOne(Number(id));
     }
 
     @Put(':id')
-     @UsePipes(new ValidationPipe({ transform: true }))
+    @UsePipes(new ValidationPipe({ transform: true }))
+    @ApiOperation({ summary: 'Update a comment' })
+    @ApiResponse({ status: 200, description: 'Comment successfully updated.' })
+    @ApiResponse({ status: 404, description: 'Comment not found.' })
     update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
         return this.commentService.update(Number(id), updateCommentDto);
     }
 
     @Delete(':id')
+    @ApiOperation({ summary: 'Delete a comment' })
+    @ApiResponse({ status: 200, description: 'Comment successfully deleted.' })
+    @ApiResponse({ status: 404, description: 'Comment not found.' })
     remove(@Param('id') id: string) {
         return this.commentService.remove(Number(id));
     }
