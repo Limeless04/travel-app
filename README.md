@@ -50,11 +50,6 @@ To start all services:
 ```bash
 docker-compose up -d
 ```
-or using podman
-```bash
-podman-compose up -d
-
-``
 
 This will start:
 - PostgreSQL database on port 5432
