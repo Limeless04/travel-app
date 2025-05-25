@@ -1,0 +1,84 @@
+# my-api
+# compiled output
+/my-api/dist
+/my-api/node_modules
+/my-api/build
+
+# Logs
+/my-api/my-apilogs
+/my-api/*.log
+/my-api/npm-debug.log*
+/my-api/pnpm-debug.log*
+/my-api/yarn-debug.log*
+/my-api/yarn-error.log*
+/my-api/lerna-debug.log*
+
+# OS
+/my-api/.DS_Store
+
+# Tests
+/my-api/coverage
+/my-api/.nyc_output
+
+# IDEs and editors
+/my-api/.idea
+/my-api/.project
+/my-api/.classpath
+/my-api/.c9/
+/my-api/*.launch
+/my-api/.settings/
+/my-api/*.sublime-workspace
+
+# IDE - VSCode
+/my-api/.vscode/*
+/my-api/!.vscode/settings.json
+/my-api/!.vscode/tasks.json
+/my-api/!.vscode/launch.json
+/my-api/!.vscode/extensions.json
+
+# dotenv environment variable files
+/my-api/.env
+/my-api/.env.development.local
+/my-api/.env.test.local
+/my-api/.env.production.local
+/my-api/.env.local
+
+# temp directory
+/my-api/.temp
+/my-api/.tmp
+
+# Runtime data
+/my-api/pids
+/my-api/*.pid
+/my-api/*.seed
+/my-api/*.pid.lock
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+/my-api/report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# travel-app
+# Logs
+/travel-app/logs
+/travel-app/*.log
+/travel-app/npm-debug.log*
+/travel-app/yarn-debug.log*
+/travel-app/yarn-error.log*
+/travel-app/pnpm-debug.log*
+/travel-app/lerna-debug.log*
+
+/travel-app/node_modules
+/travel-app/dist
+/travel-app/dist-ssr
+/travel-app/*.local
+
+# Editor directories and files
+/travel-app/.vscode/*
+/travel-app/!.vscode/extensions.json
+/travel-app/.idea
+/travel-app/.DS_Store
+/travel-app/*.suo
+/travel-app/*.ntvs*
+/travel-app/*.njsproj
+/travel-app/*.sln
+/travel-app/*.sw?
+
