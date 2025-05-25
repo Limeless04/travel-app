@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useAuthStore } from "../../store/useAuthStore";
 import ArticleNotFound from "./ArticleNotFound";
 import type { User } from "../../store/useAuthStore";
@@ -8,7 +7,7 @@ import CommentSection from "../../components/CommentSection";
 import type {  Comment } from "../../components/CommentSection";
 import { AiOutlineLike } from "react-icons/ai";
 import { FaRegCommentDots } from "react-icons/fa";
-import apiClient from "../../lib/axios/client";
+import {apiClient} from "../../lib/axios/client";
 
 type ArticleDetail = {
   id: number;
@@ -137,7 +136,7 @@ async function fetchBySlug(
 
   try {
     const response = await apiClient.get(
-      `${import.meta.env.VITE_ENDPOINT_API_URL}/articles/${slug}`,
+      `/articles/${slug}`,
       {
         headers: {
           Authorization: `Bearer ${user?.token || ""}`,

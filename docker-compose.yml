@@ -1,64 +1,51 @@
-version: '3.8'
-
 services:
-  # PostgreSQL Database Service
   postgres:
-    image: postgres:13-alpine # Use a specific version for stability
-    container_name: my_postgres_db
-    restart: always # Restart if it crashes
-    ports:
-      - "5432:5432" # Host port:Container port (optional, good for direct access)
-    environment:
-      POSTGRES_DB: mydb # Your database name
-      POSTGRES_USER: myuser # Your database user
-      POSTGRES_PASSWORD: mypassword # Your database password
-    volumes:
-      - db_data:/var/lib/postgresql/data # Persist data to a named volume
-
-  # NestJS API Service
-  nestjs-api:
-    build:
-      context: ./nestjs-api # Path to your NestJS Dockerfile
-      dockerfile: Dockerfile
-    container_name: my_nestjs_api
+    image: postgres:15
+    container_name: postgres
     restart: always
-    ports:
-      - "3000:3000" # Expose NestJS API on host port 3000
     environment:
-      # These environment variables will be available inside the NestJS container
-      DATABASE_URL: postgres://myuser:mypassword@postgres:5432/mydatabase
-      DB_HOST: postgres # Service name of the PostgreSQL container
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./my-api
+    container_name: nestjs-api
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres # localhost letter change it into db
       DB_PORT: 5432
-      DB_USERNAME: myuser
-      DB_PASSWORD: mypassword
-      DB_DATABASE: mydb
-      NODE_ENV: development # Or production
-    depends_on:
-      - postgres # Ensure postgres starts before nestjs-api
-    volumes:
-      - ./nestjs-api:/app # Mount the host code for hot-reloading (development only)
-      - /app/node_modules # Exclude node_modules from being mounted from host
-    # For hot-reloading in development, you might need to enable watch in NestJS
-    # command: yarn start:dev # Or similar command if you have nodemon or webpack watch
-
-  # React App Service
-  react-app:
-    build:
-      context: ./react-app # Path to your React Dockerfile
-      dockerfile: Dockerfile
-    container_name: my_react_app
-    restart: always
+      DB_USER: postgres
+      DB_PASS: password
+      DB_NAME: mydb
+      JWT_SECRET: supersecret
+      JWT_EXPIRES_IN:  3600s
+      CORS_ORIGIN:  http://frontend:5173
     ports:
-      - "80:80" # Expose React app on host port 80 (or 8000:80 for 8000)
-    environment:
-      # These environment variables will be available inside the React container
-      # For Create React App, these need to be prefixed with REACT_APP_
-      REACT_APP_API_URL: http://localhost:3000 # Point to your NestJS API
-    depends_on:
-      - nestjs-api # Ensure NestJS API starts before React app (optional, but good practice)
+      - "3000:3000"
     volumes:
-      - ./react-app:/app # Mount for development (if you want to see changes without rebuilding)
-      - /app/node_modules # Exclude node_modules from being mounted from host
+      - ./my-api:/app
+    command: npm run start:dev
+
+  frontend:
+    build: ./travel-app
+    container_name: vite-react
+    restart: always
+    environment:
+      VITE_API_URL: http://backend:3000
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./travel-app:/app
+    command: npm run dev
 
 volumes:
-  db_data: # Define the named volume for PostgreSQL data persistence
+  pgdata:

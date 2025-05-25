@@ -1,0 +1,6 @@
+./my-api/.env
+./my-api/.env.local
+./my-api/.env.*.local
+./my-api/node_modules
+./my-api/npm-debug.log*
+.git 

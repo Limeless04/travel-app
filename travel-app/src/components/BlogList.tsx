@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Pagination from "./Pagination";
 import ArticleCard from "./ArticleCard";
 import { useArticleStore } from "../store/useArticleStore";
@@ -19,11 +19,11 @@ const BlogList = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-    const { data } = await apiClient.get(
-      `/articles?limit=${LIMIT}&page=${page}`
-    );
-    setArticles(data.data);
-    setTotal(data.total);
+      const { data } = await apiClient.get(
+        `/articles?limit=${LIMIT}&page=${page}`
+      );
+      setArticles(data.data);
+      setTotal(data.total);
     } catch (error) {
       console.error("Failed to fetch articles:", error);
       if (error instanceof Error) {

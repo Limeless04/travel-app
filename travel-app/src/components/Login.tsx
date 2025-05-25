@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 import { NavLink } from "react-router";
 import { z } from "zod";
 import { useAuthStore } from "../store/useAuthStore";
-import Toast from "./Toast";
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
