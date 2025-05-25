@@ -49,7 +49,7 @@ export const useAuthStore = create<AuthStore>()(
         set({ loading: true, error: null, message: null });
         try {
           const res = await axios.post(
-            import.meta.env.VITE_ENDPOINT_API_URL + "/auth/login",
+            import.meta.env.VITE_ENDPOINT_API_URL + "/auth/signin",
             { email, password }
           );
 
@@ -97,7 +97,7 @@ export const useAuthStore = create<AuthStore>()(
         set({ loading: true, error: null, message: null }); // Clear previous errors/messages
         try {
           const res = await axios.post(
-            import.meta.env.VITE_ENDPOINT_API_URL + '/auth/register',
+            import.meta.env.VITE_ENDPOINT_API_URL + '/auth/singup',
             { username, email, password }
           );
 

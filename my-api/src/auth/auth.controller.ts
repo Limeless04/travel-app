@@ -8,7 +8,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
+  @Post('signup')
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, description: 'User successfully registered.' })
@@ -17,7 +17,7 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
-  @Post('login')
+  @Post('signin')
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, description: 'User successfully logged in.' })

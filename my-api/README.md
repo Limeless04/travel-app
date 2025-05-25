@@ -5,7 +5,7 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+  <p align="center">A blog API built with <a href="http://nestjs.com" target="_blank">NestJS</a> framework for building efficient and scalable server-side applications.</p>
     <p align="center">
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
@@ -23,12 +23,39 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This is a Travel blog API built with [NestJS](https://github.com/nestjs/nest) framework. It provides a complete backend solution for a blog platform with the following features:
+
+- User authentication and authorization
+- Article management (create, read, update, delete)
+- Comment system for articles
+- Like functionality for articles
+- Database integration using TypeORM
+
+## Features
+
+- **User Management**: Complete user registration and authentication system
+- **Article System**: Full CRUD operations for blog articles
+- **Comment System**: Users can comment on articles
+- **Like System**: Users can like articles
+- **Database**: Uses TypeORM for database operations
+- **Security**: Built-in authentication and authorization guards
 
 ## Project setup
 
 ```bash
 $ npm install
+```
+
+## Environment Configuration
+
+Create a `.env` file in the root directory with the following variables:
+```env
+DATABASE_HOST=your_database_host
+DATABASE_PORT=your_database_port
+DATABASE_USERNAME=your_database_username
+DATABASE_PASSWORD=your_database_password
+DATABASE_NAME=your_database_name
+JWT_SECRET=your_jwt_secret
 ```
 
 ## Compile and run the project
@@ -44,6 +71,14 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Run Seed 
+for seeding the database with dummy date
+
+```bash
+
+npm run seed
+```
+
 ## Run tests
 
 ```bash
@@ -56,6 +91,17 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## API Documentation
+
+The API provides the following main endpoints:
+
+- `/auth` - Authentication endpoints (login, register)
+- `/users` - User management endpoints
+- `/articles` - Article management endpoints
+- `/comments` - Comment management endpoints
+
+For detailed API documentation, please refer to the API documentation in the `/docs` directory or run the application and visit the Swagger documentation at `/api`.
 
 ## Deployment
 
@@ -95,4 +141,4 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
