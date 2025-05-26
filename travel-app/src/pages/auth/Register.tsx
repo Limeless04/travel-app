@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router";
 import { z } from "zod";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../../store/useAuthStore";
 import { useNavigate } from "react-router";
-import AlertModal from "./AlertModal";
+import AlertModal from "../../components/modal/AlertModal";
 
 const registerSchema = z
   .object({
@@ -47,14 +47,8 @@ const Register = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = registerSchema.safeParse({
-      username,
-      email,
-      password,
-      confirmPassword,
-    });
+  const validateForm = () => {
+    const result = registerSchema.safeParse(form);
     if (!result.success) {
       const fieldErrors: {
         username?: string;
@@ -70,8 +64,15 @@ const Register = () => {
           fieldErrors.confirmPassword = err.message;
       });
       setZodErrors(fieldErrors);
-      return;
+      return false;
     }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const isValid = validateForm();
+    if (!isValid) return;
+    // Reset errors before submission
     setZodErrors({});
     const res = await register(username, email, password);
     if (res.success) {

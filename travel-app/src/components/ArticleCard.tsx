@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../store/useAuthStore";
 import { useState } from "react";
-import AlertModal from "./AlertModal";
+import AlertModal from "./modal/AlertModal";
 import { FiTrash2, FiEdit } from "react-icons/fi";
 import type { Author } from "../store/useArticleStore";
 import { apiClient } from "../lib/axios/client";
-import DeleteModal from "./DeleteModal";
+import DeleteModal from "./modal/DeleteModal";
 import { useArticleData } from "../hook/useArticleData";
 
 type ArticleCardProps = {
@@ -57,11 +57,6 @@ const ArticleCard = ({
       const res = await apiClient.delete(`/articles/${slug}`);
       if (res.status === 200) {
         setShowDeleteModal(false);
-        // Trigger refetch of articles in the parent component that uses useArticleData
-        // Instead of calling fetchArticles/fetchArticlesByUser here,
-        // it's usually better to pass a prop like `onArticleDeleted` from the parent
-        // which then triggers the fetch in the parent.
-        // For simplicity, we'll keep it here for now, but be aware of the dependency.
         fetchArticles();
         fetchArticlesByUser();
       } else {

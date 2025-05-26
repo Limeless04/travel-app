@@ -55,3 +55,31 @@ export class UpdateArticleDto {
   @IsString()
   image_url?: string;
 }
+
+export class CommentDto {
+  id: number;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  author: {
+    id: number;
+    username: string;
+  };
+}
+
+export class ArticleDto {
+  id: number;
+  title: string;
+  slug: string;
+  summary: string;
+  image_url: string;
+  total_likes: number;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  author: {
+    id: number;
+    username: string;
+  };
+  comments: CommentDto[];
+}

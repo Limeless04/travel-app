@@ -29,9 +29,7 @@ services:
       CORS_ORIGIN:  http://localhost
     ports:
       - "3000:3000"
-    volumes:
-      - ./my-api:/app
-    command: npm run start:dev
+
 
   frontend:
     build: 

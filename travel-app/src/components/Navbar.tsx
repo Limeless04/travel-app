@@ -1,6 +1,6 @@
 import { NavLink } from "react-router";
 import { useAuthStore } from "../store/useAuthStore";
-import LogoutModal from "./LogoutModal";
+import LogoutModal from "./modal/LogoutModal";
 import { useState, useCallback} from "react";
 import { useNavigate } from "react-router";
 

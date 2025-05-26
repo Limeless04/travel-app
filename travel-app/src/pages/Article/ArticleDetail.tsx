@@ -1,13 +1,13 @@
 import { useNavigate, useParams } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
 import ArticleNotFound from "./ArticleNotFound";
 import type { User } from "../../store/useAuthStore";
 import CommentSection from "../../components/CommentSection";
-import type {  Comment } from "../../components/CommentSection";
+import type { Comment } from "../../components/CommentSection";
 import { AiOutlineLike } from "react-icons/ai";
 import { FaRegCommentDots } from "react-icons/fa";
-import {apiClient} from "../../lib/axios/client";
+import { apiClient } from "../../lib/axios/client";
 
 type ArticleDetail = {
   id: number;
@@ -36,33 +36,32 @@ const ArticleDetail = () => {
   const [article, setArticle] = useState<ArticleDetail | null>(null); // Initialize as null
   const [showComments, setShowComments] = useState(false);
 
-  useEffect(() => {
-    const loadArticle = async () => {
-      try {
-        setLoading(true);
-        setError(false); // Reset error state
-        const data = await fetchBySlug(slug, user);
-
-        if (data) {
-          setArticle(data);
-        } else {
-          setError(true);
-        }
-      } catch (error) {
-        console.error("Error fetching article:", error);
+  const loadArticle = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(false); // Reset error state
+      const data = await fetchBySlug(slug, user);
+      if (data) {
+        setArticle(data);
+      } else {
         setError(true);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching article:", error);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  useEffect(() => {
     if (slug) {
       loadArticle();
     } else {
       setError(true);
       setLoading(false);
     }
-  }, [slug, user]); 
+  }, [slug, user]);
 
   if (loading) {
     return (
@@ -91,38 +90,44 @@ const ArticleDetail = () => {
         className="w-full h-64 object-cover rounded-md mb-6"
       />
       <h1 className="text-3xl font-bold mb-2">{article.title}</h1>
-    <div className="flex flex-col sm:flex-row sm:items-center text-gray-500 text-sm mb-4 gap-1 sm:gap-2">
-      <span>By {article.author?.username || "Unknown Author"}</span>
-      <span className="hidden sm:inline">|</span>
-      <span>{article.author?.email || "No email"}</span>
-      <span className="hidden sm:inline">•</span>
-      <span>{new Date(article.createdAt).toLocaleDateString()}</span>
-    </div>
+      <div className="flex flex-col sm:flex-row sm:items-center text-gray-500 text-sm mb-4 gap-1 sm:gap-2">
+        <span>By {article.author?.username || "Unknown Author"}</span>
+        <span className="hidden sm:inline">|</span>
+        <span>{article.author?.email || "No email"}</span>
+        <span className="hidden sm:inline">•</span>
+        <span>{new Date(article.createdAt).toLocaleDateString()}</span>
+      </div>
       <p className="text-gray-700 leading-relaxed whitespace-pre-line mb-4">
         {article.content}
       </p>
-    <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
-      <button
-        className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:text-red-600 bg-transparent rounded transition focus:outline-none"
-        type="button"
-      >
-        <span>
-        <AiOutlineLike className="h-5 w-5" />
-        </span>
-        {article.total_likes} Likes
-      </button>
-      <button
-        className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:text-blue-600 bg-transparent rounded transition focus:outline-none"
-        onClick={() => setShowComments((prev) => !prev)}
-      >
-        <span>
-        <FaRegCommentDots className="h-5 w-5" />
-        </span>
-        {showComments ? "Hide Comments" : "Show Comments"}
-      </button>
-    </div>
+      <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
+        <button
+          className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:text-red-600 bg-transparent rounded transition focus:outline-none"
+          type="button"
+        >
+          <span>
+            <AiOutlineLike className="h-5 w-5" />
+          </span>
+          {article.total_likes} Likes
+        </button>
+        <button
+          className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:text-blue-600 bg-transparent rounded transition focus:outline-none"
+          onClick={() => setShowComments((prev) => !prev)}
+        >
+          <span>
+            <FaRegCommentDots className="h-5 w-5" />
+          </span>
+          {showComments ? "Hide Comments" : "Show Comments"}
+        </button>
+      </div>
       {showComments && (
-        <CommentSection comments={article.comments} />
+        <CommentSection
+          comments={article.comments}
+          articleSlug={article.slug}
+          articleId={article.id}
+          onSubmit={loadArticle}
+          articleOwnerId={article.author.id}
+        />
       )}
     </div>
   );

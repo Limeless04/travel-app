@@ -20,8 +20,8 @@ export class Users {
   @OneToMany(() => Comment, (comment) => comment.author)
   comments: Comment[];
 
-  @Column()
   @Exclude()
+  @Column()
   password_hash: string;
 
   @CreateDateColumn()

@@ -4,11 +4,11 @@ import Home from "../pages/Home.tsx";
 import About from "../pages/About.tsx";
 import NotFound from "../components/NotFound.tsx";
 import AuthLayout from "../pages/AuthLayout.tsx";
-import Login from "../components/Login.tsx";
-import Register from "../components/Register.tsx";
 import ArticleDetail from "../pages/Article/ArticleDetail.tsx";
 import ArticleNotFound from "../pages/Article/ArticleNotFound.tsx";
 import ArticleForm from "../pages/Article/ArticleForm.tsx";
+import Login from "../pages/auth/Login.tsx";
+import Register from "../pages/auth/Register.tsx";
 
 const router = createBrowserRouter([
   {

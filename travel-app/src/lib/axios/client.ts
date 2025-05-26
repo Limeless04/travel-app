@@ -12,7 +12,7 @@ const authClient = axios.create({
 });
 
 // Request interceptor to add token
-const addAuthToken = (config: Any) => {
+const addAuthToken = (config: any) => {
   const { user } = useAuthStore.getState();
   if (user?.token) {
     config.headers.Authorization = `Bearer ${user.token}`;

@@ -2,7 +2,7 @@ import React, { useState, useEffect} from "react";
 import { useNavigate } from "react-router";
 import { NavLink } from "react-router";
 import { z } from "zod";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../../store/useAuthStore";
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
@@ -26,6 +26,7 @@ const Login = () => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

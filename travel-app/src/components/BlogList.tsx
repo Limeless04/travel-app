@@ -3,7 +3,7 @@ import Pagination from "./Pagination";
 import ArticleCard from "./ArticleCard";
 import { useArticleStore } from "../store/useArticleStore";
 import ArticleCardSkeleton from "./loading/ArticleSkeletonLaoding";
-import AlertModal from "./AlertModal";
+import AlertModal from "./modal/AlertModal";
 import { useArticleData } from "../hook/useArticleData";
 
 interface BlogListProps {

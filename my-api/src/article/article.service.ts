@@ -7,6 +7,8 @@ import { NotFoundException } from '@nestjs/common';
 import { Users } from '../entities/user.entity'; // Import Users entity
 import { Like } from 'src/entities/like.entity';
 import slugify from 'slugify';
+import { plainToInstance } from 'class-transformer';
+import { ArticleDto } from './article-dto'; // Import ArticleDto for response transformation
 @Injectable()
 export class ArticleService {
   constructor(
@@ -43,10 +45,17 @@ export class ArticleService {
     return this.articleRepository.findOneBy({ id });
   }
 
-  async findBySlug(slug: string): Promise<Article | null> {
-    return this.articleRepository.findOne({
+  async findBySlug(slug: string): Promise<ArticleDto | null> {
+    const article = await this.articleRepository.findOne({
       where: { slug },
-      relations: ['author', 'comments'],
+      relations: ['author', 'comments', 'comments.author'],
+    });
+    if (!article) {
+      throw new NotFoundException(`Article with slug ${slug} not found`);
+    }
+
+    return plainToInstance(ArticleDto, article, {
+      excludeExtraneousValues: false,
     });
   }
 
@@ -135,7 +144,7 @@ export class ArticleService {
   async update(
     slug: string,
     updateData: UpdateArticleDto,
-  ): Promise<Article | null> {
+  ): Promise<ArticleDto | null> {
     await this.articleRepository.update({ slug }, updateData);
     return this.findBySlug(slug);
   }

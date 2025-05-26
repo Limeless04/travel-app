@@ -43,6 +43,45 @@ export class CommentService {
     return this.commentRepository.findOneBy({ id });
   }
 
+  async findByArticleCommentBySlug(slug: string): Promise<Comment[]> {
+    const article = await this.articleRepository.findOne({
+      where: { slug },
+    });
+
+    if (!article) {
+      throw new NotFoundException(`Article with slug "${slug}" not found`);
+    }
+
+    return this.commentRepository.find({
+      where: { article: { id: article.id } },
+      relations: ['author', 'article'], // Optional, if you need related data
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async findBySlugAndId(slug: string, id: number): Promise<Comment | null> {
+    const article = await this.articleRepository.findOne({
+      where: { slug },
+    });
+
+    if (!article) {
+      throw new NotFoundException(`Article with slug "${slug}" not found`);
+    }
+
+    const comment = await this.commentRepository.findOne({
+      where: { id, article: { id: article.id } },
+      relations: ['author', 'article'], // Optional, if you need related data
+    });
+
+    if (!comment) {
+      throw new NotFoundException(
+        `Comment with ID ${id} not found for article "${slug}"`,
+      );
+    }
+
+    return comment;
+  }
+
   async create(createCommentDto: CreateCommentDto): Promise<Comment> {
     const { content, articleId, authorId } = createCommentDto;
 
@@ -55,11 +94,11 @@ export class CommentService {
     if (!author) {
       throw new NotFoundException(`User with ID ${authorId} not found`);
     }
-    
+
     const newComment = this.commentRepository.create({
       content,
       article: article, // Assign the found Article entity
-      author: author,   // Assign the found User entity
+      author: author, // Assign the found User entity
     });
 
     return this.commentRepository.save(newComment);
@@ -67,20 +106,25 @@ export class CommentService {
 
   async update(
     id: number,
+    slug: string,
     updateCommentDto: UpdateCommentDto,
   ): Promise<Comment | null> {
-    const {content} = updateCommentDto
-    const comment = await this.commentRepository.findOneBy({ id });
+    const { content } = updateCommentDto;
+    const comment = await this.findBySlugAndId(slug, id);
 
     if (!comment) {
-      throw new NotFoundException(`Comment with ID ${id} not found`);
+      throw new NotFoundException(
+        `Comment with ID ${id} not found for article "${slug}"`,
+      );
     }
+
     const updateData: Partial<Comment> = {
-      content: content !== undefined ? content : comment.content, 
+      content: updateCommentDto.content ?? comment.content,
     };
-    
+
     await this.commentRepository.update(id, updateData);
-    return this.findOne(id);
+    const updatedComment = await this.commentRepository.findOneBy({ id });
+    return updatedComment;
   }
 
   async remove(id: number): Promise<void> {

@@ -3,9 +3,9 @@ import { z } from "zod";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../../store/useAuthStore";
 import { apiClient } from "../../lib/axios/client";
-import AlertModal from "../../components/AlertModal";
+import AlertModal from "../../components/modal/AlertModal";
 import { useParams } from "react-router";
-import DeleteModal from "../../components/DeleteModal";
+import DeleteModal from "../../components/modal/DeleteModal";
 const createArticleSchema = z.object({
   title: z.string().min(1, "Title is required"),
   content: z.string().min(1, "Content is required"),
