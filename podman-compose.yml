@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  backend:
+    build: ./my-api
+    container_name: nestjs-api
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres # localhost letter change it into db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASS: password
+      DB_NAME: mydb
+      JWT_SECRET: supersecret
+      JWT_EXPIRES_IN: 3600s
+      CORS_ORIGIN: http://localhost:5173
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./my-api:/app
+    command: npm run start:dev
+
+  frontend:
+    build:
+      context: ./travel-app
+      args:
+        VITE_API_URL: http://localhost:3000
+    container_name: vite-react
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  pgdata:

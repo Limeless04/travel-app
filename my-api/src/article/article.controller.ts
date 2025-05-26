@@ -24,8 +24,6 @@ import {
   ApiBearerAuth,
   ApiQuery,
 } from '@nestjs/swagger';
-import { plainToInstance } from 'class-transformer';
-import { Article } from 'src/entities/article.entity';
 
 @ApiTags('articles')
 @ApiBearerAuth()
@@ -110,25 +108,25 @@ export class ArticleController {
     return this.articleService.findOne(Number(id));
   }
 
-  @Put(':id')
+  @Put(':slug')
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiOperation({ summary: 'Update an article' })
   @ApiResponse({ status: 200, description: 'Article successfully updated.' })
   @ApiResponse({ status: 404, description: 'Article not found.' })
   async update(
-    @Param('id') id: string,
+    @Param('slug') slug: string,
     @Body() updateUserDto: UpdateArticleDto,
   ) {
-    return this.articleService.update(Number(id), updateUserDto);
+    return this.articleService.update(slug, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete(':slug')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Delete an article' })
   @ApiResponse({ status: 200, description: 'Article successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Article not found.' })
-  async remove(@Param('id') id: string) {
-    return this.articleService.remove(Number(id));
+  async remove(@Param('slug') slug: string) {
+    return this.articleService.remove(slug);
   }
 }

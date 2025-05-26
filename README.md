@@ -51,7 +51,15 @@ To start all services:
 docker-compose up -d
 ```
 
+or use podman:
+
+```bash
+
+podman compose --file docker-compose.yml --detach
+```
+
 This will start:
+
 - PostgreSQL database on port 5432
 - NestJS API on port 3000
 - React frontend on port 80
@@ -63,6 +71,7 @@ docker-compose logs -f
 ```
 
 Run this to populate postgres with dummy data
+
 ```bash
 docker-compose exec nestjs-api npm run seed
 ```
@@ -71,13 +80,9 @@ docker-compose exec nestjs-api npm run seed
 
 - Frontend: http://localhost
 - Backend API: http://localhost:3000
-- API Documentation: http://localhost:3000/api (if Swagger is enabled)
+- API Documentation: http://localhost:3000/api/docs (if Swagger is enabled)
 
 ### 5. Development Workflow
-
-#### Hot Reloading
-
-Both the frontend and backend support hot reloading in development mode. Changes to the code will automatically trigger rebuilds.
 
 #### Database Management
 
@@ -128,10 +133,12 @@ docker-compose down -v
 ### Common Issues
 
 1. **Port Conflicts**
+
    - If port 80 is already in use, modify the frontend port in docker-compose.yml
    - If port 3000 is already in use, modify the backend port in docker-compose.yml
 
 2. **Database Connection Issues**
+
    - Ensure the database container is running: `docker-compose ps`
    - Check database logs: `docker-compose logs postgres`
 
@@ -154,15 +161,3 @@ docker-compose logs -f nestjs-api
 # Restart a specific service
 docker-compose restart nestjs-api
 ```
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License. 

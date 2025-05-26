@@ -49,6 +49,7 @@ $ npm install
 ## Environment Configuration
 
 Create a `.env` file in the root directory with the following variables:
+
 ```env
 DATABASE_HOST=your_database_host
 DATABASE_PORT=your_database_port
@@ -71,7 +72,8 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Run Seed 
+## Run Seed
+
 for seeding the database with dummy date
 
 ```bash
@@ -116,6 +118,15 @@ $ mau deploy
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
+## Docker Support
+
+The application includes Docker configuration for containerization. To build and run the Docker container:
+
+```bash
+docker build -t my-api .
+docker run -p 3000:3000 my-api
+```
+
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:
@@ -128,17 +139,3 @@ Check out a few resources that may come in handy when working with NestJS:
 - Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
 - To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
 - Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-This project is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).

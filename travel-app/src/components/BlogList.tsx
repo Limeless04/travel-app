@@ -1,57 +1,23 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState } from "react";
 import Pagination from "./Pagination";
 import ArticleCard from "./ArticleCard";
 import { useArticleStore } from "../store/useArticleStore";
 import ArticleCardSkeleton from "./loading/ArticleSkeletonLaoding";
 import AlertModal from "./AlertModal";
-import { apiClient } from "../lib/axios/client";
-import { useAuthStore } from "../store/useAuthStore";
-
-const LIMIT = 4;
+import { useArticleData } from "../hook/useArticleData";
 
 interface BlogListProps {
   type: string;
 }
 
 const BlogList = ({ type }: BlogListProps) => {
-  const { articles, setArticles, userArticles, setUserArticles } =
-    useArticleStore();
+  const { articles, userArticles } = useArticleStore();
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showAlert, setShowAlert] = useState(false);
-  const { user } = useAuthStore();
-  const currentArticles = type === "user" ? userArticles : articles;
-
-  const fetchArticles = useCallback(async () => {
-    setLoading(true);
-    try {
-      const url =
-        type === "user"
-          ? `/articles/?limit=${LIMIT}&page=${page}&user_id=${user?.id}`
-          : `/articles?limit=${LIMIT}&page=${page}`;
-      const { data } = await apiClient.get(url);
-      if (type === "user") {
-        setUserArticles(data.data);
-      } else {
-        setArticles(data.data);
-      }
-
-      setTotal(data.total);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      setError(message);
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 2000);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, setArticles]);
-
-  useEffect(() => {
-    fetchArticles();
-  }, [page, type]);
+  const currentArticles = (type === "user" ? userArticles : articles) || [];
+  const { loading, error, showAlert, setShowAlert, total, limit } =
+    useArticleData({
+      page,
+    });
 
   return (
     <div className="p-4">
@@ -59,14 +25,14 @@ const BlogList = ({ type }: BlogListProps) => {
         {error && (
           <AlertModal
             open={showAlert}
-            onClose={() => setError(null)}
+            onClose={() => setShowAlert(false)}
             type="failed"
             message={error}
           />
         )}
         {loading ? (
           // Show skeletons while loading
-          Array.from({ length: LIMIT }).map((_, i) => (
+          Array.from({ length: limit }).map((_, i) => (
             <ArticleCardSkeleton key={i} />
           ))
         ) : currentArticles && currentArticles.length > 0 ? (
@@ -93,7 +59,7 @@ const BlogList = ({ type }: BlogListProps) => {
         <div className="mt-6">
           <Pagination
             current={page}
-            total={Math.ceil(total / LIMIT)}
+            total={Math.ceil(total / limit)}
             onPageChange={(p) => setPage(p)}
           />
         </div>

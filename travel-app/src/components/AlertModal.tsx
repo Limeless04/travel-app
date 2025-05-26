@@ -4,7 +4,7 @@ import { useAuthStore } from "../store/useAuthStore";
 interface AlertModalProps {
   open: boolean;
   onClose: () => void;
-  type: "success" | "failed" | "session" | "login";
+  type: "success" | "failed" | "session" | "login" | "delete" | "error";
   title?: string;
   message?: string;
 }
@@ -16,12 +16,12 @@ const AlertModal = ({
   message,
   title,
 }: AlertModalProps) => {
-  if (!open) return null;
-
   const navigate = useNavigate();
 
   const { isSessionExpiredModalOpen, hideSessionExpiredModal, logout } =
     useAuthStore();
+
+  if (!open) return null;
 
   if (type === "session" && !isSessionExpiredModalOpen) return null;
 
@@ -45,7 +45,7 @@ const AlertModal = ({
     };
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-transparent bg-opacity-80 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 sm:mx-0 sm:w-[400px]">
           <div className="text-center">
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
@@ -91,7 +91,30 @@ const AlertModal = ({
 
   if (type === "login") {
     return (
-      <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-transparent bg-opacity-80 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-8 w-full max-w-md mx-4 sm:mx-0 sm:w-[400px] shadow-lg text-center">
+          <span className="text-blue-500 text-4xl mb-2">ℹ️</span>
+          <h2 className="text-2xl font-semibold mb-2 text-blue-600">
+            Login Required
+          </h2>
+          <p className="mb-6">
+            You need to log in to access this feature. Please log in to
+            continue.
+          </p>
+          <button
+            onClick={onClose}
+            className="mt-4 px-6 py-2 rounded bg-blue-600 text-white font-bold hover:bg-blue-700 transition"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === "delete") {
+    return (
+      <div className="fixed inset-0 bg-transparent bg-opacity-80 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg p-8 w-full max-w-md mx-4 sm:mx-0 sm:w-[400px] shadow-lg text-center">
           <span className="text-blue-500 text-4xl mb-2">ℹ️</span>
           <h2 className="text-2xl font-semibold mb-2 text-blue-600">
@@ -113,7 +136,7 @@ const AlertModal = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-transparent bg-opacity-80 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 min-w-[300px] shadow-lg text-center">
         {icon}
         <h2

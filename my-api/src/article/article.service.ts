@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {  Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Article } from '../entities/article.entity';
 import { CreateArticleDto, UpdateArticleDto } from './article-dto';
 import { NotFoundException } from '@nestjs/common';
@@ -133,14 +133,14 @@ export class ArticleService {
   }
 
   async update(
-    id: number,
-    updateData: Partial<Article>,
+    slug: string,
+    updateData: UpdateArticleDto,
   ): Promise<Article | null> {
-    await this.articleRepository.update(id, updateData);
-    return this.findOne(id);
+    await this.articleRepository.update({ slug }, updateData);
+    return this.findBySlug(slug);
   }
 
-  async remove(id: number): Promise<void> {
-    await this.articleRepository.delete(id);
+  async remove(slug: string): Promise<void> {
+    await this.articleRepository.delete({ slug });
   }
 }

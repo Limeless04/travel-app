@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { z } from "zod";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../../store/useAuthStore";
 import { apiClient } from "../../lib/axios/client";
 import AlertModal from "../../components/AlertModal";
-
+import { useParams } from "react-router";
+import DeleteModal from "../../components/DeleteModal";
 const createArticleSchema = z.object({
   title: z.string().min(1, "Title is required"),
   content: z.string().min(1, "Content is required"),
@@ -13,22 +14,25 @@ const createArticleSchema = z.object({
   authorId: z.number(),
 });
 
-type CreateArticleDto = z.infer<typeof createArticleSchema>;
+type ArticleForm = z.infer<typeof createArticleSchema>;
 
 const ArticleForm = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const [form, setForm] = useState<CreateArticleDto>({
+  const [form, setForm] = useState<ArticleForm>({
     title: "",
     content: "",
     summary: "",
     image_url: "",
-    authorId: user?.id!,
+    authorId: user?.id ?? 0,
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [showAlerModal, setShowAlertModal] = useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [error, setError] = useState<string>();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const { slug } = useParams();
+  const isEditMode = !!slug;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -40,64 +44,148 @@ const ArticleForm = () => {
     }));
   };
 
-  const fetchPost = async (formData: any) => {
+  const validateForm = () => {
+    const result = isEditMode
+      ? createArticleSchema.partial().safeParse(form)
+      : createArticleSchema.safeParse(form);
+
+    if (!result.success) {
+      const fieldErrors: { [key: string]: string } = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
+      });
+      setErrors(fieldErrors);
+      return false;
+    }
+
+    setErrors({});
+    return true;
+  };
+
+  const submitForm = async () => {
     try {
       setLoading(true);
-      const res = await apiClient.post("/articles", formData);
-      if (res.status === 201) {
+      const url = isEditMode ? `/articles/${slug}` : "/articles";
+      const { authorId, ...formData } = form;
+      const payload: ArticleForm | Omit<ArticleForm, "authorId"> = isEditMode
+        ? formData
+        : form;
+      const res = isEditMode
+        ? await apiClient.put(url, payload)
+        : await apiClient.post(url, form);
+
+      if ([200, 201].includes(res.status)) {
         setShowAlertModal(true);
-        setForm({
-          title: "",
-          summary: "",
-          content: "",
-          image_url: "",
-          authorId: user?.id!,
-        });
+        if (!isEditMode) {
+          resetForm();
+        }
       }
-    } catch (error: any) {
+    } catch (err: any) {
+      console.error("Form error:", err);
+      setError(
+        err?.response?.data?.message || err.message || "Unexpected error"
+      );
       setShowAlertModal(true);
-      setError("Failed to create article");
-      console.error("Error creating article:", error);
-      // Optional: show error message to user
     } finally {
       setLoading(false);
     }
   };
 
+  const resetForm = () => {
+    setForm({
+      title: "",
+      content: "",
+      summary: "",
+      image_url: "",
+      authorId: user?.id ?? 0,
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Parse and validate with zod
-    const result = createArticleSchema.safeParse(form);
-    if (!result.success) {
-      const fieldErrors: { [key: string]: string } = {};
-      result.error.errors.forEach((err) => {
-        if (err.path[0]) {
-          fieldErrors[err.path[0] as string] = err.message;
-        }
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-    setErrors({});
-    fetchPost(form);
+    if (validateForm()) submitForm();
   };
+
+  const handleDeleteArticle = async () => {
+    if (!slug) return;
+    try {
+      setLoading(true);
+      const res = await apiClient.delete(`/articles/${slug}`);
+      if (res.status === 200) {
+        setShowDeleteModal(false);
+        navigate("/");
+      } else {
+        throw new Error("Failed to delete the article.");
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+      setError("Failed to delete the article.");
+      setShowAlertModal(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchArticle = async () => {
+    if (!slug) return;
+    try {
+      setLoading(true);
+      const res = await apiClient.get(`/articles/${slug}`);
+      const data = res.data;
+      setForm({
+        title: data.title,
+        summary: data.summary,
+        content: data.content,
+        image_url: data.image_url || "",
+        authorId: (data.authorId || user?.id) ?? 0,
+      });
+    } catch {
+      setError("Failed to load article.");
+      setShowAlertModal(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isEditMode) {
+      fetchArticle();
+    }
+  }, [slug]);
 
   const handleCloseAlert = () => {
     setShowAlertModal(false);
-    navigate("/");
+    if (!error) navigate("/");
   };
-
   return (
     <>
       {showAlerModal && (
         <AlertModal
-          message={"Registration successful!"}
+          message={
+            error
+              ? "Failed to save the article."
+              : "The article was saved successfully."
+          }
           type={error ? "failed" : "success"}
           open={showAlerModal}
           title={
-            error ? "Article Creation Failed!" : "Article Creation Success!"
+            error
+              ? isEditMode
+                ? "Article Update Failed!"
+                : "Article Creation Failed!"
+              : isEditMode
+              ? "Article Updated Successfully!"
+              : "Article Created Successfully!"
           }
           onClose={handleCloseAlert}
+        />
+      )}
+
+      {showDeleteModal && (
+        <DeleteModal
+          open={showDeleteModal}
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={handleDeleteArticle}
         />
       )}
 
@@ -192,7 +280,13 @@ const ArticleForm = () => {
           className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition"
           disabled={loading}
         >
-          {loading ? "Please Wait, we creating your article" : "Create Article"}
+          {loading
+            ? isEditMode
+              ? "Updating article..."
+              : "Creating article..."
+            : isEditMode
+            ? "Update Article"
+            : "Create Article"}
         </button>
       </form>
     </>

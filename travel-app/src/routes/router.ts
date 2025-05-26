@@ -32,12 +32,19 @@ const router = createBrowserRouter([
       {
         path: "articles/:slug",
         Component: ArticleDetail,
-        
       },
       {
-        path:"articles/create",
-        Component: ArticleForm
-      }
+        path: "articles/create",
+        Component: ArticleForm,
+      },
+      {
+        path: "articles/delete/:slug",
+        Component: ArticleForm,
+      },
+      {
+        path: "articles/update/:slug",
+        Component: ArticleForm,
+      },
     ],
   },
   {
