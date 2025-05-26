@@ -82,6 +82,7 @@ const CommentSection = ({
       if (onSubmit) onSubmit(); // Refresh
       setEditComment(null); // Reset edit mode
     } catch (error) {
+      console.error("Error submitting comment:", error);
       setError(true);
       setMessage("Failed to submit comment. Please try again later.");
     } finally {
@@ -102,8 +103,9 @@ const CommentSection = ({
         onSubmit(); // Call the onSubmit prop to refresh comments
       }
     } catch (error) {
-      setMessage("Failed to delete comment. Please try again later.");
+      console.error("Error deleting comment:", error);
       setError(true);
+      setMessage("Failed to delete comment. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -122,6 +124,7 @@ const CommentSection = ({
       }
       setEditComment({ id: commentId, content: res.data.content });
     } catch (error) {
+      console.error("Error fetching comment for edit:", error);
       setMessage("Failed to delete comment. Please try again later.");
       setError(true);
     } finally {
@@ -208,6 +211,7 @@ const CommentSection = ({
         onSubmit={handleOnSubmit}
         updateComment={editComment?.content}
         onCancel={() => setEditComment(null)}
+        loading={loading}
       />
     </div>
   );

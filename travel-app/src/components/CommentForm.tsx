@@ -8,9 +8,15 @@ interface CommentFormProps {
   onSubmit: (comment: string) => void;
   onCancel?: () => void;
   updateComment?: string;
+  loading?: boolean;
 }
 
-const CommentForm = ({ onSubmit,onCancel, updateComment }: CommentFormProps) => {
+const CommentForm = ({
+  onSubmit,
+  onCancel,
+  updateComment,
+  loading,
+}: CommentFormProps) => {
   const [comment, setComment] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,13 +31,12 @@ const CommentForm = ({ onSubmit,onCancel, updateComment }: CommentFormProps) => 
     }
   };
 
-
   const handleCancel = () => {
     setComment("");
     if (onCancel) {
       onCancel();
     }
-  }
+  };
 
   useEffect(() => {
     if (updateComment) {
@@ -54,8 +59,9 @@ const CommentForm = ({ onSubmit,onCancel, updateComment }: CommentFormProps) => 
       <button
         type="submit"
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline mt-2 text-sm"
+        disabled={loading}
       >
-        Submit
+        {loading ? "Submitting..." : "Submit"}
       </button>
       {updateComment && updateComment?.length > 0 && (
         <button
