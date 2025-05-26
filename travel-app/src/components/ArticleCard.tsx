@@ -2,13 +2,15 @@ import { useNavigate } from "react-router";
 import { useAuthStore } from "../store/useAuthStore";
 import { useState } from "react";
 import AlertModal from "./AlertModal";
+import { FiTrash2, FiEdit } from "react-icons/fi";
+import type { Author } from "../store/useArticleStore";
 
 type ArticleCardProps = {
   title: string;
   summary: string;
   slug: string;
   imageUrl?: string;
-  author?: string;
+  author?: Author;
   total_likes?: number; // Added total_likes prop
 };
 
@@ -23,21 +25,34 @@ const ArticleCard = ({
   const navigate = useNavigate();
   const [showLoginAlert, setShowLoginAlert] = useState(false);
   const { isAuthenticated } = useAuthStore();
+  const { user } = useAuthStore();
+  const canDelete = user && author && user.id === Number(author.id);
+  console.log(user);
+  console.log(author);
+  console.log(canDelete);
   const handleReadMore = () => {
     if (isAuthenticated) {
       navigate(`/articles/${slug}`, { replace: true }); // Replace with actual article ID or path
-    }else{
-        setShowLoginAlert(true);
-        setTimeout(() => setShowLoginAlert(false), 2000);
-
+    } else {
+      setShowLoginAlert(true);
+      setTimeout(() => setShowLoginAlert(false), 2000);
     }
+  };
+
+  const handleDelete = (slug: string) => {
+    console.log(author);
+    console.log(`Delete Article ${slug}`);
+  };
+  const handleEdit = (slug: string) => {
+    console.log(author);
+    console.log(`Edit Article ${slug}`);
   };
 
   return (
     <ul className="space-y-6 sm:space-y-8">
       {showLoginAlert && (
         <AlertModal
-        type="login"
+          type="login"
           open={showLoginAlert}
           onClose={() => setShowLoginAlert(false)}
         />
@@ -55,6 +70,27 @@ const ArticleCard = ({
             : undefined
         }
       >
+        {canDelete && (
+          <>
+            <button
+              onClick={() => handleDelete(slug)} // define this handler
+              className="absolute top-2 right-2 z-20 text-white bg-red-600 hover:bg-red-700 rounded-full p-1 shadow-lg transition"
+              title="Delete article"
+              aria-label="Delete article"
+            >
+              <FiTrash2 size={20} />
+            </button>
+            <button
+              onClick={() => handleEdit(slug)}
+              className="absolute top-2 right-10 z-20 text-white bg-blue-600 hover:bg-blue-700 rounded-full p-1 shadow-lg transition"
+              title="Edit article"
+              aria-label="Edit article"
+            >
+              <FiEdit size={20} />
+            </button>
+          </>
+        )}
+
         {imageUrl && (
           <div
             className="absolute inset-0 pointer-events-none"
@@ -68,7 +104,7 @@ const ArticleCard = ({
         <div className={imageUrl ? "relative z-10" : undefined}>
           <h3 className="text-lg sm:text-xl font-bold mb-2">{title}</h3>
           <p className="text-sm sm:text-base leading-relaxed mb-3">{summary}</p>
-          {author && <div className="text-xs mb-2">By {author}</div>}
+          {author && <div className="text-xs mb-2">By {author.username}</div>}
           {typeof total_likes === "number" && (
             <div className="text-xs mb-2 flex items-center">
               <svg
@@ -81,6 +117,7 @@ const ArticleCard = ({
               {total_likes}
             </div>
           )}
+
           <button
             onClick={handleReadMore}
             className="text-blue-200 hover:underline text-sm sm:text-base font-medium inline-flex items-center group"

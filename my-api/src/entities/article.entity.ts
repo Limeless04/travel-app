@@ -9,7 +9,8 @@ import {
   OneToMany
 } from 'typeorm';
 import { Users } from './user.entity';
-import { Comment } from './comment.entity'; // Adjust the import path as necessary
+import { Comment } from './comment.entity';
+import { Type, Exclude } from 'class-transformer';
 
 @Entity('articles')
 export class Article {
@@ -21,7 +22,7 @@ export class Article {
 
   @Column('text')
   @Column({ nullable: true })
-  slug: string; 
+  slug: string;
 
   @Column('text')
   summary: string;
@@ -29,17 +30,20 @@ export class Article {
   @Column('text')
   content: string;
 
-  @Column('text', {nullable: true})
+  @Column('text', { nullable: true })
   image_url: string;
 
   @Column('int', { default: 0 })
   total_likes: number;
 
   @ManyToOne(() => Users, (user) => user.articles, { onDelete: 'CASCADE' })
-   @JoinColumn({ name: 'author_id' }) 
+  @JoinColumn({ name: 'author_id' })
+  @Type(() => Users)
   author: Users;
 
-  @OneToMany(() => Comment, (comment) => comment.article, { onDelete: 'CASCADE' })
+  @OneToMany(() => Comment, (comment) => comment.article, {
+    onDelete: 'CASCADE',
+  })
   comments: Comment[];
 
   @CreateDateColumn()

@@ -5,10 +5,17 @@ interface AlertModalProps {
   open: boolean;
   onClose: () => void;
   type: "success" | "failed" | "session" | "login";
+  title?: string;
   message?: string;
 }
 
-const AlertModal = ({ open, onClose, type, message }: AlertModalProps) => {
+const AlertModal = ({
+  open,
+  onClose,
+  type,
+  message,
+  title,
+}: AlertModalProps) => {
   if (!open) return null;
 
   const navigate = useNavigate();
@@ -16,10 +23,8 @@ const AlertModal = ({ open, onClose, type, message }: AlertModalProps) => {
   const { isSessionExpiredModalOpen, hideSessionExpiredModal, logout } =
     useAuthStore();
 
-if (type === "session" && !isSessionExpiredModalOpen) return null;
+  if (type === "session" && !isSessionExpiredModalOpen) return null;
 
-  const title =
-    type === "success" ? "Registration Successful!" : "Registration Failed!";
   const icon =
     type === "success" ? (
       <span className="text-green-500 text-4xl mb-2">✔️</span>

@@ -9,7 +9,7 @@ const Home = () => {
   return (
     <>
       <main className="flex-grow max-w-full px-4 py-6 sm:px-6 sm:py-8 md:max-w-xl lg:max-w-3xl mx-auto">
-        {isAuthenticated && <Hero />}
+        <Hero />
         {/* Image Carousel */}
         <section className="mb-8 w-full px-0">
           <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 border-b-2 border-blue-500 pb-2">
@@ -20,12 +20,23 @@ const Home = () => {
           </div>
         </section>
 
+        {isAuthenticated && (
+          <section className="mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 border-b-2 border-blue-500 pb-2">
+              Yours Articles
+            </h2>
+            <ul className="space-y-6 sm:space-y-8">
+              <BlogList type="user" />
+            </ul>
+          </section>
+        )}
+
         <section className="mb-8">
           <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 border-b-2 border-blue-500 pb-2">
             Featured Articles
           </h2>
           <ul className="space-y-6 sm:space-y-8">
-            <BlogList />
+            <BlogList type="all" />
           </ul>
         </section>
       </main>

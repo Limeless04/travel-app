@@ -100,6 +100,7 @@ const Register = () => {
           message={message || "Registration successful!"}
           type={error ? "failed" : "success"}
           open={showAlert}
+          title={error ? "Registration Failed!" : "Registration Success!"}
           onClose={() => setShowAlert(false)}
         />
       )}

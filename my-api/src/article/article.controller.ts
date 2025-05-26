@@ -12,11 +12,20 @@ import {
   ParseIntPipe,
   UsePipes,
   ValidationPipe,
+  HttpCode,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto, UpdateArticleDto } from './article-dto';
 import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
+import { plainToInstance } from 'class-transformer';
+import { Article } from 'src/entities/article.entity';
 
 @ApiTags('articles')
 @ApiBearerAuth()
@@ -25,6 +34,7 @@ export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Post()
+  @HttpCode(201)
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiOperation({ summary: 'Create a new article' })
@@ -36,20 +46,43 @@ export class ArticleController {
 
   @Get()
   @ApiOperation({ summary: 'Get all articles with pagination' })
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number' })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page' })
+  @ApiQuery({
+    name: 'page',
+    required: true,
+    type: Number,
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: true,
+    type: Number,
+    description: 'Items per page',
+  })
+  @ApiQuery({
+    name: 'user id',
+    required: false,
+    type: Number,
+    description: 'User Id',
+  })
   @ApiResponse({ status: 200, description: 'Return all articles.' })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('user_id') userId?: number,
   ) {
-    return this.articleService.findAll(page, limit);
+    const result = userId
+      ? await this.articleService.findAllByUserId(userId, page, limit)
+      : await this.articleService.findAll(page, limit);
+    return result;
   }
 
   @Post(':id/like')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Like or unlike an article' })
-  @ApiResponse({ status: 200, description: 'Like status toggled successfully.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Like status toggled successfully.',
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   async likeOrUnlike(
     @Param('id') articleId: string,
@@ -59,7 +92,7 @@ export class ArticleController {
     return this.articleService.toggleLike(Number(articleId), userId);
   }
 
-  @Get(":slug")
+  @Get(':slug')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get article by slug' })
   @ApiResponse({ status: 200, description: 'Return article by slug.' })

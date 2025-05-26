@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { z } from "zod";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../../store/useAuthStore";
+import { apiClient } from "../../lib/axios/client";
+import AlertModal from "../../components/AlertModal";
 
 const createArticleSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -23,7 +25,9 @@ const ArticleForm = () => {
     image_url: "",
     authorId: user?.id!,
   });
-
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showAlerModal, setShowAlertModal] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleChange = (
@@ -34,6 +38,30 @@ const ArticleForm = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const fetchPost = async (formData: any) => {
+    try {
+      setLoading(true);
+      const res = await apiClient.post("/articles", formData);
+      if (res.status === 201) {
+        setShowAlertModal(true);
+        setForm({
+          title: "",
+          summary: "",
+          content: "",
+          image_url: "",
+          authorId: user?.id!,
+        });
+      }
+    } catch (error: any) {
+      setShowAlertModal(true);
+      setError("Failed to create article");
+      console.error("Error creating article:", error);
+      // Optional: show error message to user
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -51,15 +79,33 @@ const ArticleForm = () => {
       return;
     }
     setErrors({});
+    fetchPost(form);
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlertModal(false);
+    navigate("/");
   };
 
   return (
     <>
+      {showAlerModal && (
+        <AlertModal
+          message={"Registration successful!"}
+          type={error ? "failed" : "success"}
+          open={showAlerModal}
+          title={
+            error ? "Article Creation Failed!" : "Article Creation Success!"
+          }
+          onClose={handleCloseAlert}
+        />
+      )}
+
       <form
         onSubmit={handleSubmit}
         className="max-w-xl mt-20 mx-auto bg-white p-8 rounded-lg shadow space-y-6"
       >
-          <h1 className="text-4xl text-center">Create New Travel Article</h1>
+        <h1 className="text-4xl text-center">Create New Travel Article</h1>
         <div>
           <button
             className="mb-6 text-blue-600 hover:underline flex items-center gap-1 bg-transparent p-0"
@@ -144,8 +190,9 @@ const ArticleForm = () => {
         <button
           type="submit"
           className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition"
+          disabled={loading}
         >
-          Create Article
+          {loading ? "Please Wait, we creating your article" : "Create Article"}
         </button>
       </form>
     </>

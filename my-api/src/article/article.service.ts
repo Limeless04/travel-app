@@ -16,20 +16,22 @@ export class ArticleService {
     private userRepository: Repository<Users>,
     @InjectRepository(Like) // Inject Like repository
     private likeRepository: Repository<Like>,
-
   ) {}
 
-  async findAll(page: number, limit: number): Promise<{data: Article[], total: number,  page: number; limit: number;}> {
+  async findAll(
+    page: number,
+    limit: number,
+  ): Promise<{ data: Article[]; total: number; page: number; limit: number }> {
     const skip = (page - 1) * limit;
     const [articles, total] = await this.articleRepository.findAndCount({
-        skip,
-        take: limit,
-        order:{
-            createdAt: 'DESC'
-        }
-        });
+      skip,
+      take: limit,
+      order: {
+        createdAt: 'DESC',
+      },
+    });
 
-      return {
+    return {
       data: articles,
       total: total,
       page: page,
@@ -42,12 +44,40 @@ export class ArticleService {
   }
 
   async findBySlug(slug: string): Promise<Article | null> {
-    return this.articleRepository.findOne({ where: { slug },   relations: ['author', 'comments']  });
+    return this.articleRepository.findOne({
+      where: { slug },
+      relations: ['author', 'comments'],
+    });
   }
 
-  async create(createArticleDto: CreateArticleDto): Promise<Article> {
+  async findAllByUserId(
+    id: number,
+    page: number,
+    limit: number,
+  ): Promise<{ data: Article[]; total: number; page: number; limit: number }> {
+    const skip = (page - 1) * limit;
+    const [articles, total] = await this.articleRepository.findAndCount({
+      skip,
+      take: limit,
+      where: { author: { id } },
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: ['author'],
+    });
 
-    const {  authorId, title } = createArticleDto;
+    return {
+      data: articles,
+      total: total,
+      page: page,
+      limit: limit,
+    };
+  }
+
+  async create(
+    createArticleDto: CreateArticleDto,
+  ): Promise<{ data: Article; success: true }> {
+    const { authorId, title } = createArticleDto;
 
     const author = await this.userRepository.findOneBy({ id: authorId });
     if (!author) {
@@ -56,19 +86,27 @@ export class ArticleService {
 
     const slug = slugify(title, { lower: true, strict: true });
 
-
     const newArticle = this.articleRepository.create({
       ...createArticleDto,
-        slug,
-        author: author,
+      slug,
+      author: author,
     });
-    return this.articleRepository.save(newArticle);
+    const savedArticle = await this.articleRepository.save(newArticle);
+
+    return {
+      data: savedArticle,
+      success: true,
+    };
   }
 
-  async toggleLike(articleId: number, userId: number): Promise<{liked: boolean; total_likes: number}> {
+  async toggleLike(
+    articleId: number,
+    userId: number,
+  ): Promise<{ liked: boolean; total_likes: number }> {
     const article = await this.articleRepository.findOneBy({ id: articleId });
 
-    if (!article) throw new NotFoundException(`Article with ID ${articleId} not found`);
+    if (!article)
+      throw new NotFoundException(`Article with ID ${articleId} not found`);
 
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new NotFoundException(`User with ID ${userId} not found`);

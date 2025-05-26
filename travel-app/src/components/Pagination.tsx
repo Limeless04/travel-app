@@ -1,3 +1,5 @@
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+
 interface PaginationProps {
   current: number;
   total: number;
@@ -35,7 +37,7 @@ const Pagination = ({ current, total, onPageChange }: PaginationProps) => {
         disabled={current === 1}
         onClick={() => onPageChange(current - 1)}
       >
-        &lt;
+        <FiChevronLeft size={20} />
       </button>
       {pages.map((p, i) =>
         typeof p === "number" ? (
@@ -62,7 +64,7 @@ const Pagination = ({ current, total, onPageChange }: PaginationProps) => {
         disabled={current === total}
         onClick={() => onPageChange(current + 1)}
       >
-        &gt;
+        <FiChevronRight size={20} />
       </button>
     </nav>
   );

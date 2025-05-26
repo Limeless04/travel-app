@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
@@ -12,6 +16,13 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
+    const existingUser = await this.userService.findByEmail(dto.email);
+
+    if (existingUser) {
+      // Send a proper response to the client
+      throw new ConflictException('Email already exists');
+    }
+
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const user = await this.userService.create({
       ...dto,
@@ -25,13 +36,13 @@ export class AuthService {
   async login(dto: LoginDto): Promise<{ user: any; access_token: string }> {
     const user = await this.userService.findByEmail(dto.email);
     if (!user || !(await bcrypt.compare(dto.password, user.password_hash))) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Your password doesn't match");
     }
 
     const payload = { sub: user.id, username: user.username };
     const { password_hash, ...userWithoutPassword } = user;
     return {
-    user: userWithoutPassword,
+      user: userWithoutPassword,
       access_token: this.jwtService.sign(payload),
     };
   }
