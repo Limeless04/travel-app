@@ -163,35 +163,39 @@ const CommentSection = ({
                 </span>
               )}
               {/* Edit Span */}
-              <span
-                className={`ml-2 px-2 py-0.5 rounded text-white text-xs font-medium ${
-                  canEditOrDelete(comment.author.id)
-                    ? "bg-blue-600 hover:underline cursor-pointer"
-                    : "bg-blue-400 opacity-50 cursor-not-allowed"
-                }`}
-                onClick={() => {
-                  if (canEditOrDelete(comment.author.id)) {
-                    handleEditComment(comment.id);
-                  }
-                }}
-              >
-                Edit
-              </span>
-              {/* Delete Span */}
-              <span
-                className={`ml-2 px-2 py-0.5 rounded text-white text-xs font-medium ${
-                  canEditOrDelete(comment.author.id)
-                    ? "bg-red-600 hover:underline cursor-pointer"
-                    : "bg-red-400 opacity-50 cursor-not-allowed"
-                }`}
-                onClick={() => {
-                  if (canEditOrDelete(comment.author.id)) {
-                    handleDeleteComment(comment.id);
-                  }
-                }}
-              >
-                Delete
-              </span>
+              {canEditOrDelete(comment.author.id) && (
+                <>
+                  <span
+                    className={`ml-2 px-2 py-0.5 rounded text-white text-xs font-medium ${
+                      canEditOrDelete(comment.author.id)
+                        ? "bg-blue-600 hover:underline cursor-pointer"
+                        : "bg-blue-400 opacity-50 cursor-not-allowed"
+                    }`}
+                    onClick={() => {
+                      if (canEditOrDelete(comment.author.id)) {
+                        handleEditComment(comment.id);
+                      }
+                    }}
+                  >
+                    Edit
+                  </span>
+                  {/* Delete Span */}
+                  <span
+                    className={`ml-2 px-2 py-0.5 rounded text-white text-xs font-medium ${
+                      canEditOrDelete(comment.author.id)
+                        ? "bg-red-600 hover:underline cursor-pointer"
+                        : "bg-red-400 opacity-50 cursor-not-allowed"
+                    }`}
+                    onClick={() => {
+                      if (canEditOrDelete(comment.author.id)) {
+                        handleDeleteComment(comment.id);
+                      }
+                    }}
+                  >
+                    Delete
+                  </span>
+                </>
+              )}
             </div>
           </li>
         ))}
