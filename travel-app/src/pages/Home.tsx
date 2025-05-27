@@ -40,11 +40,6 @@ const Home = () => {
           </ul>
         </section>
       </main>
-
-      <footer className="w-full text-center py-4 bg-gray-100 text-gray-500 text-xs sm:text-sm mt-auto shadow-inner fixed bottom-0 left-0">
-        &copy; {new Date().getFullYear()} Travel Article Hub. All rights
-        reserved.
-      </footer>
     </>
   );
 };

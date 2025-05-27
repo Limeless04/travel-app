@@ -139,7 +139,7 @@ const ArticleCard = ({
 
         {/* Action Buttons (Delete/Edit) - ensure z-index is high enough */}
         {canDelete && (
-          <div className="absolute top-2 right-2 z-20 flex space-x-2">
+          <div className="absolute top-1 right-2 z-20 flex space-x-2">
             <button
               onClick={() => setShowDeleteModal(true)}
               className="text-white bg-red-600 hover:bg-red-700 rounded-full p-1 shadow-lg transition flex items-center justify-center"
