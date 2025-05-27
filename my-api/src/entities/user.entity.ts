@@ -1,8 +1,15 @@
 // users/user.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { Article } from './article.entity'; // Adjust the import path as necessary
 import { Comment } from './comment.entity'; // Adjust the import path as necessary
 import { Exclude } from 'class-transformer';
+import { Likes } from './like.entity'; // Adjust the import path as necessary
 @Entity()
 export class Users {
   @PrimaryGeneratedColumn()
@@ -19,6 +26,9 @@ export class Users {
 
   @OneToMany(() => Comment, (comment) => comment.author)
   comments: Comment[];
+
+  @OneToMany(() => Likes, (like) => like.user)
+  likes: Likes[];
 
   @Exclude()
   @Column()

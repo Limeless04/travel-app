@@ -5,7 +5,7 @@ import { Article } from '../entities/article.entity';
 import { CreateArticleDto, UpdateArticleDto } from './article-dto';
 import { NotFoundException } from '@nestjs/common';
 import { Users } from '../entities/user.entity'; // Import Users entity
-import { Like } from 'src/entities/like.entity';
+import { Likes } from 'src/entities/like.entity';
 import slugify from 'slugify';
 import { plainToInstance } from 'class-transformer';
 import { ArticleDto } from './article-dto'; // Import ArticleDto for response transformation
@@ -16,8 +16,8 @@ export class ArticleService {
     private readonly articleRepository: Repository<Article>,
     @InjectRepository(Users) // Inject Users repository
     private userRepository: Repository<Users>,
-    @InjectRepository(Like) // Inject Like repository
-    private likeRepository: Repository<Like>,
+    @InjectRepository(Likes) // Inject Like repository
+    private likeRepository: Repository<Likes>,
   ) {}
 
   async findAll(
@@ -48,7 +48,7 @@ export class ArticleService {
   async findBySlug(slug: string): Promise<ArticleDto | null> {
     const article = await this.articleRepository.findOne({
       where: { slug },
-      relations: ['author', 'comments', 'comments.author'],
+      relations: ['author', 'comments', 'comments.author', 'likes'],
     });
     if (!article) {
       throw new NotFoundException(`Article with slug ${slug} not found`);
@@ -108,37 +108,52 @@ export class ArticleService {
     };
   }
 
-  async toggleLike(
-    articleId: number,
+  async likeStatus(
+    articleSlug: string,
     userId: number,
-  ): Promise<{ liked: boolean; total_likes: number }> {
-    const article = await this.articleRepository.findOneBy({ id: articleId });
+  ): Promise<{ like: boolean; total_likes: number }> {
+    const article = await this.findBySlug(articleSlug);
 
-    if (!article)
-      throw new NotFoundException(`Article with ID ${articleId} not found`);
-
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user) throw new NotFoundException(`User with ID ${userId} not found`);
-
-    const existingLike = await this.likeRepository.findOne({
-      where: { article: { id: articleId }, user: { id: userId } },
-      relations: ['article', 'user'],
+    const articleEntity = await this.articleRepository.findOne({
+      where: { id: article?.id },
     });
 
-    if (existingLike) {
-      // Unlike
-      await this.likeRepository.delete(existingLike.id);
-      article.total_likes = Math.max(0, article.total_likes - 1);
-      await this.articleRepository.save(article);
-      return { liked: false, total_likes: article.total_likes };
-    } else {
-      // Like
-      const like = this.likeRepository.create({ article, user });
-      await this.likeRepository.save(like);
-      article.total_likes += 1;
-      await this.articleRepository.save(article);
-      return { liked: true, total_likes: article.total_likes };
+    if (!articleEntity)
+      throw new NotFoundException(
+        `Article with slug ${articleEntity} not found`,
+      );
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
+
+    // Check if the user has already liked this article
+    const existingLike = await this.likeRepository.findOne({
+      where: {
+        article: { id: articleEntity.id },
+        user: { id: userId },
+      },
+    });
+    let likeStatus: boolean;
+    if (existingLike) {
+      await this.likeRepository.remove(existingLike);
+      articleEntity.total_likes = Math.max(0, articleEntity.total_likes - 1);
+      likeStatus = false; // User unliked the article
+    } else {
+      const newLike = this.likeRepository.create({
+        article: { id: articleEntity.id },
+        user: { id: userId }, // or user.id if you prefer
+      });
+      await this.likeRepository.save(newLike);
+      articleEntity.total_likes += 1;
+      likeStatus = true;
+    }
+    await this.articleRepository.save(articleEntity);
+
+    return { like: likeStatus, total_likes: articleEntity.total_likes };
+
+    // Save the updated total_likes back to the article
   }
 
   async update(

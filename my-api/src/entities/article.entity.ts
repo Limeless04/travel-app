@@ -6,11 +6,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
-  OneToMany
+  OneToMany,
 } from 'typeorm';
 import { Users } from './user.entity';
 import { Comment } from './comment.entity';
 import { Type, Exclude } from 'class-transformer';
+import { Likes } from './like.entity';
 
 @Entity('articles')
 export class Article {
@@ -45,6 +46,11 @@ export class Article {
     onDelete: 'CASCADE',
   })
   comments: Comment[];
+
+  @OneToMany(() => Likes, (like) => like.article, {
+    onDelete: 'CASCADE',
+  })
+  likes: Likes[];
 
   @CreateDateColumn()
   createdAt: Date;
