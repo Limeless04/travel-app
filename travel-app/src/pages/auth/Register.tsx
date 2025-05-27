@@ -39,7 +39,8 @@ const Register = () => {
     confirmPassword?: string;
   }>({});
   const navigate = useNavigate();
-  const { register, loading, error, message, statusCode, clearMessages } = useAuthStore();
+  const { register, loading, error, message, statusCode, clearMessages } =
+    useAuthStore();
   const [showAlert, setShowAlert] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,22 +67,25 @@ const Register = () => {
       setZodErrors(fieldErrors);
       return false;
     }
-  }
+    setZodErrors({});
+    return result.success;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // console.log("Form submitted:", form);
     const isValid = validateForm();
     if (!isValid) return;
-    // Reset errors before submission
-    setZodErrors({});
     const res = await register(username, email, password);
+    console.log("Login response:", res);
+
     if (res.success) {
       setShowAlert(true);
       setTimeout(() => {
-      setShowAlert(false);
-      navigate("/auth/login", { replace: true });
+        setShowAlert(false);
+        navigate("/auth/login", { replace: true });
       }, 2000);
-    }else{
+    } else {
       setShowAlert(true);
       setTimeout(() => {
         setShowAlert(false);
@@ -90,8 +94,8 @@ const Register = () => {
   };
 
   useEffect(() => {
-    clearMessages()
-  }, [])
+    clearMessages();
+  }, []);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -148,12 +152,11 @@ const Register = () => {
         </label>
         <input
           id="email"
-          type="email"
+          type="text"
           name="email"
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={email}
           onChange={handleChange}
-          required
           autoComplete="email"
         />
         {zodErrors.email && (
@@ -171,7 +174,6 @@ const Register = () => {
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={password}
           onChange={handleChange}
-          required
           autoComplete="current-password"
         />
         {zodErrors.password && (
@@ -189,7 +191,6 @@ const Register = () => {
           className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={confirmPassword}
           onChange={handleChange}
-          required
           autoComplete="new-password"
         />
         {zodErrors.confirmPassword && (
