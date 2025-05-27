@@ -33,9 +33,6 @@ const ArticleCard = ({
   const [loading, setLoading] = useState(false); // Consider managing loading state for this card's specific actions
   const canDelete = user && author && user.id === Number(author.id);
 
-  // It's generally better to pass these functions as props from the parent
-  // if they affect the list of articles. If useArticleData just provides
-  // methods to refetch, it's okay here, but be mindful of performance.
   const { fetchArticles, fetchArticlesByUser } = useArticleData({ page: 1 });
 
   const handleReadMore = () => {
@@ -102,13 +99,8 @@ const ArticleCard = ({
         />
       )}
 
-      {/* The main card container - applying fixed height and flex properties */}
-      {/* Set a min-height or fixed height. h-[400px] is an example. Adjust as needed. */}
-      {/* flex flex-col to stack content vertically */}
       <div
         className="bg-white p-4 sm:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 relative overflow-hidden flex flex-col h-[400px]" // Fixed height
-        // Optionally, if you prefer min-height to allow more content:
-        // className="bg-white p-4 sm:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 relative overflow-hidden flex flex-col min-h-[400px]"
       >
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-50 z-30">
@@ -159,9 +151,6 @@ const ArticleCard = ({
           </div>
         )}
 
-        {/* Main Content Area - This needs to be positioned and styled to fit */}
-        {/* We'll use flex-grow to push the read more link to the bottom,
-            and line-clamp to limit title/summary text height */}
         <div className={`relative z-10 flex flex-col flex-grow `}>
           <h3
             className={`text-lg sm:text-xl font-bold mb-2 ${textColorClass} line-clamp-2`}

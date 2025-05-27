@@ -44,7 +44,7 @@ export interface ArticleDetail {
 interface ArticleStore {
   userArticles: ArticleCardProps[];
   articles: ArticleCardProps[];
-  articleDetail: Partial<ArticleDetail> | null;
+  articleDetail: Partial<ArticleDetail> | ArticleDetail | null,
   setArticleDetail: (articleDetail: Partial<ArticleDetail> | null) => void;
   setArticles: (articles: ArticleCardProps[]) => void;
   setUserArticles: (articles: ArticleCardProps[]) => void;
@@ -53,7 +53,7 @@ interface ArticleStore {
 
 export const useArticleStore = create<ArticleStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       articles: [],
       userArticles: [],
       articleDetail: null,
