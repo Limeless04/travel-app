@@ -13,11 +13,19 @@ interface BlogListProps {
 const BlogList = ({ type }: BlogListProps) => {
   const { articles, userArticles } = useArticleStore();
   const [page, setPage] = useState(1);
+  const {
+    loading,
+    error,
+    showAlert,
+    setShowAlert,
+    totalAllArticle,
+    totalUserArticle,
+    limit,
+  } = useArticleData({
+    page,
+  });
   const currentArticles = (type === "user" ? userArticles : articles) || [];
-  const { loading, error, showAlert, setShowAlert, total, limit } =
-    useArticleData({
-      page,
-    });
+  const total = (type === "user" ? totalUserArticle : totalAllArticle) || 0;
 
   return (
     <div className="p-4">

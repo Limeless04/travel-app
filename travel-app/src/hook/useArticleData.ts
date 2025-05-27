@@ -15,7 +15,8 @@ export function useArticleData({ page }: UseFetchArticlesProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false);
-  const [total, setTotal] = useState<number>(0);
+  const [totalAllArticle, setTotalAllArticle] = useState<number>(0);
+  const [totalUserArticle, setTotalUserArticle] = useState<number>(0);
 
   const fetchArticles = useCallback(async () => {
     setLoading(true);
@@ -23,7 +24,7 @@ export function useArticleData({ page }: UseFetchArticlesProps) {
       const url = `/articles?limit=${LIMIT}&page=${page}`;
       const { data } = await apiClient.get(url);
       setArticles(data.data);
-      setTotal(data.total);
+      setTotalAllArticle(data.total);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       setError(message);
@@ -41,7 +42,7 @@ export function useArticleData({ page }: UseFetchArticlesProps) {
         `/articles/?limit=${LIMIT}&page=${page}&user_id=${user?.id}`
       );
       setUserArticles(data.data);
-      setTotal(data.total);
+      setTotalUserArticle(data.total);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       setError(message);
@@ -66,7 +67,8 @@ export function useArticleData({ page }: UseFetchArticlesProps) {
     loading,
     error,
     showAlert,
-    total,
+    totalAllArticle,
+    totalUserArticle,
     limit: LIMIT,
   };
 }

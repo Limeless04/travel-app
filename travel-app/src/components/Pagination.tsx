@@ -7,9 +7,6 @@ interface PaginationProps {
 }
 
 const Pagination = ({ current, total, onPageChange }: PaginationProps) => {
-  // Example: < 1 2 ... 4 >
-  // Always show first, current, last, and ellipsis if needed
-
   const pages: (number | string)[] = [];
 
   if (total <= 3) {
@@ -29,6 +26,10 @@ const Pagination = ({ current, total, onPageChange }: PaginationProps) => {
       pages.push(total);
     }
   }
+
+  // console.log("Pagination pages:", pages);
+  // console.log("Current page:", current);
+  // console.log("Total pages:", total);
 
   return (
     <nav className="flex items-center justify-center space-x-2">
