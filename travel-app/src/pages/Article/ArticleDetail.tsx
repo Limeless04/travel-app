@@ -9,6 +9,12 @@ import { AiOutlineLike } from "react-icons/ai";
 import { FaRegCommentDots } from "react-icons/fa";
 import { apiClient } from "../../lib/axios/client";
 
+type Likes = {
+  id: number;
+  userId: number;
+  articleId: number;
+};
+
 type ArticleDetail = {
   id: number;
   title: string;
@@ -22,6 +28,7 @@ type ArticleDetail = {
     username: string;
     email: string;
   };
+  likes: Likes[];
   comments: Comment[];
   createdAt: string;
   updatedAt: string;
@@ -31,10 +38,14 @@ const ArticleDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true); // Start with true since we're loading initially
+  const [loading, setLoading] = useState<boolean>(true);
   const { user } = useAuthStore();
-  const [article, setArticle] = useState<ArticleDetail | null>(null); // Initialize as null
+  const [article, setArticle] = useState<ArticleDetail | null>(null);
+  // const [likeStatus, setLikeStatus] = useState<boolean>(false);
   const [showComments, setShowComments] = useState(false);
+  const hasLikes = article?.likes
+    ? article.likes.some((like) => like.userId === user?.id)
+    : false;
 
   const loadArticle = useCallback(async () => {
     try {
@@ -53,6 +64,38 @@ const ArticleDetail = () => {
       setLoading(false);
     }
   }, []);
+
+  const handleLikes = async () => {
+    if (!article || !user) return;
+
+    try {
+      setLoading(true);
+      const response = await apiClient.post(
+        `/articles/${slug}/like/${user.id}`
+      );
+      if (response.status === 200) {
+        setArticle((prev) => {
+          if (!prev) return null;
+          const updatedLikes = hasLikes
+            ? prev.likes.filter((like) => like.userId !== user.id)
+            : [
+                ...prev.likes,
+                { id: Date.now(), userId: user.id, articleId: prev.id },
+              ];
+          return {
+            ...prev,
+            total_likes: hasLikes ? prev.total_likes - 1 : prev.total_likes + 1,
+            likes: updatedLikes,
+          };
+        });
+      }
+    } catch (error) {
+      console.error("Error handling likes:", error);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (slug) {
@@ -102,8 +145,12 @@ const ArticleDetail = () => {
       </p>
       <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
         <button
-          className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:text-red-600 bg-transparent rounded transition focus:outline-none"
+          className={`flex items-center gap-2 px-2 py-1 bg-transparent rounded transition focus:outline-none ${
+            hasLikes ? "text-red-600" : "text-gray-600 hover:text-red-600"
+          }`}
           type="button"
+          disabled={hasLikes}
+          onClick={() => handleLikes()}
         >
           <span>
             <AiOutlineLike className="h-5 w-5" />
@@ -140,14 +187,11 @@ async function fetchBySlug(
   if (!slug) return null;
 
   try {
-    const response = await apiClient.get(
-      `/articles/${slug}`,
-      {
-        headers: {
-          Authorization: `Bearer ${user?.token || ""}`,
-        },
-      }
-    );
+    const response = await apiClient.get(`/articles/${slug}`, {
+      headers: {
+        Authorization: `Bearer ${user?.token || ""}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("fetchBySlug error:", error);

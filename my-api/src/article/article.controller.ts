@@ -74,20 +74,22 @@ export class ArticleController {
     return result;
   }
 
-  @Post(':id/like')
+  @Post(':slug/like/:userId')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Like or unlike an article' })
+  @ApiOperation({
+    summary: 'Update Like or Unlike status of article by user id',
+  })
   @ApiResponse({
     status: 200,
     description: 'Like status toggled successfully.',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  async likeOrUnlike(
-    @Param('id') articleId: string,
-    @Body('userId') userId: number,
+  async updateLikeStatus(
+    @Param('slug') articleSlug: string,
+    @Param('userId') userId: number,
   ) {
     // This toggles like/unlike based on current state
-    return this.articleService.toggleLike(Number(articleId), userId);
+    return this.articleService.likeStatus(articleSlug, userId);
   }
 
   @Get(':slug')

@@ -6,11 +6,9 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
-  JoinColumn,
 } from 'typeorm';
 import { Article } from './article.entity';
 import { Users } from './user.entity';
-import { Type } from 'class-transformer';
 
 @Entity('comments')
 export class Comment {
