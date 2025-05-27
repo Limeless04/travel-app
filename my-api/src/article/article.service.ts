@@ -111,7 +111,7 @@ export class ArticleService {
   async likeStatus(
     articleSlug: string,
     userId: number,
-  ): Promise<{ total_likes: number }> {
+  ): Promise<{ like: boolean; total_likes: number }> {
     const article = await this.findBySlug(articleSlug);
 
     const articleEntity = await this.articleRepository.findOne({
@@ -135,10 +135,11 @@ export class ArticleService {
         user: { id: userId },
       },
     });
-
+    let likeStatus: boolean;
     if (existingLike) {
       await this.likeRepository.remove(existingLike);
       articleEntity.total_likes = Math.max(0, articleEntity.total_likes - 1);
+      likeStatus = false; // User unliked the article
     } else {
       const newLike = this.likeRepository.create({
         article: { id: articleEntity.id },
@@ -146,12 +147,13 @@ export class ArticleService {
       });
       await this.likeRepository.save(newLike);
       articleEntity.total_likes += 1;
+      likeStatus = true;
     }
-
-    // Save the updated total_likes back to the article
     await this.articleRepository.save(articleEntity);
 
-    return { total_likes: articleEntity.total_likes };
+    return { like: likeStatus, total_likes: articleEntity.total_likes };
+
+    // Save the updated total_likes back to the article
   }
 
   async update(

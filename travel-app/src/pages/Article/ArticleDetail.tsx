@@ -4,34 +4,15 @@ import { useAuthStore } from "../../store/useAuthStore";
 import ArticleNotFound from "./ArticleNotFound";
 import type { User } from "../../store/useAuthStore";
 import CommentSection from "../../components/CommentSection";
-import type { Comment } from "../../components/CommentSection";
 import { AiOutlineLike } from "react-icons/ai";
 import { FaRegCommentDots } from "react-icons/fa";
 import { apiClient } from "../../lib/axios/client";
+import { useArticleStore } from "../../store/useArticleStore";
+import type { ArticleDetail } from "../../store/useArticleStore";
 
-type Likes = {
-  id: number;
-  userId: number;
-  articleId: number;
-};
-
-type ArticleDetail = {
-  id: number;
-  title: string;
-  slug: string;
-  summary: string;
-  content: string;
-  image_url: string | null;
+type likeStatus = {
+  like: boolean;
   total_likes: number;
-  author: {
-    id: number;
-    username: string;
-    email: string;
-  };
-  likes: Likes[];
-  comments: Comment[];
-  createdAt: string;
-  updatedAt: string;
 };
 
 const ArticleDetail = () => {
@@ -40,12 +21,13 @@ const ArticleDetail = () => {
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const { user } = useAuthStore();
-  const [article, setArticle] = useState<ArticleDetail | null>(null);
-  // const [likeStatus, setLikeStatus] = useState<boolean>(false);
+  const setArticleDetail = useArticleStore((state) => state.setArticleDetail);
+  const articleDetail = useArticleStore((state) => state.articleDetail);
+  const [likeStatus, setLikeStatus] = useState<likeStatus>({
+    like: false,
+    total_likes: 0,
+  });
   const [showComments, setShowComments] = useState(false);
-  const hasLikes = article?.likes
-    ? article.likes.some((like) => like.userId === user?.id)
-    : false;
 
   const loadArticle = useCallback(async () => {
     try {
@@ -53,7 +35,11 @@ const ArticleDetail = () => {
       setError(false); // Reset error state
       const data = await fetchBySlug(slug, user);
       if (data) {
-        setArticle(data);
+        setArticleDetail(data);
+        setLikeStatus((prev) => ({
+          ...prev,
+          total_likes: data.total_likes || 0,
+        }));
       } else {
         setError(true);
       }
@@ -66,28 +52,19 @@ const ArticleDetail = () => {
   }, []);
 
   const handleLikes = async () => {
-    if (!article || !user) return;
-
+    if (!articleDetail || !user) return;
+    // setLikeStatus((prev) => !prev);
     try {
       setLoading(true);
       const response = await apiClient.post(
         `/articles/${slug}/like/${user.id}`
       );
-      if (response.status === 200) {
-        setArticle((prev) => {
-          if (!prev) return null;
-          const updatedLikes = hasLikes
-            ? prev.likes.filter((like) => like.userId !== user.id)
-            : [
-                ...prev.likes,
-                { id: Date.now(), userId: user.id, articleId: prev.id },
-              ];
-          return {
-            ...prev,
-            total_likes: hasLikes ? prev.total_likes - 1 : prev.total_likes + 1,
-            likes: updatedLikes,
-          };
+      if (response.status === 201) {
+        setLikeStatus({
+          like: response.data.total_likes,
+          total_likes: response.data.total_likes,
         });
+        setArticleDetail({ total_likes: response.data.total_likes });
       }
     } catch (error) {
       console.error("Error handling likes:", error);
@@ -104,7 +81,7 @@ const ArticleDetail = () => {
       setError(true);
       setLoading(false);
     }
-  }, [slug, user]);
+  }, [slug, user, loadArticle]);
 
   if (loading) {
     return (
@@ -114,7 +91,7 @@ const ArticleDetail = () => {
     );
   }
 
-  if (error || !article) {
+  if (error || !articleDetail) {
     return <ArticleNotFound />;
   }
 
@@ -127,38 +104,40 @@ const ArticleDetail = () => {
         <span aria-hidden="true">&larr;</span> Back to Home
       </button>
 
-      <img
-        src={article.image_url!}
-        alt={article.title}
-        className="w-full h-64 object-cover rounded-md mb-6"
-      />
-      <h1 className="text-3xl font-bold mb-2">{article.title}</h1>
+      {articleDetail.image_url && (
+        <img
+          src={articleDetail.image_url!}
+          alt={articleDetail.title}
+          className="w-full h-64 object-cover rounded-md mb-6"
+        />
+      )}
+
+      <h1 className="text-3xl font-bold mb-2">{articleDetail.title}</h1>
       <div className="flex flex-col sm:flex-row sm:items-center text-gray-500 text-sm mb-4 gap-1 sm:gap-2">
-        <span>By {article.author?.username || "Unknown Author"}</span>
+        <span>By {articleDetail.author?.username || "Unknown Author"}</span>
         <span className="hidden sm:inline">|</span>
-        <span>{article.author?.email || "No email"}</span>
+        <span>{articleDetail.author?.email || "No email"}</span>
         <span className="hidden sm:inline">•</span>
-        <span>{new Date(article.createdAt).toLocaleDateString()}</span>
+        <span>{new Date(articleDetail.createdAt).toLocaleDateString()}</span>
       </div>
       <p className="text-gray-700 leading-relaxed whitespace-pre-line mb-4">
-        {article.content}
+        {articleDetail.content}
       </p>
       <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
         <button
-          className={`flex items-center gap-2 px-2 py-1 bg-transparent rounded transition focus:outline-none ${
-            hasLikes ? "text-red-600" : "text-gray-600 hover:text-red-600"
+          className={`flex items-center gap-2 px-2 py-1 bg-transparent rounded transition focus:outline-none   hover:text-red-600 ${
+            likeStatus.like ? "text-red-600" : "text-gray-600"
           }`}
           type="button"
-          disabled={hasLikes}
-          onClick={() => handleLikes()}
+          onClick={handleLikes}
         >
           <span>
             <AiOutlineLike className="h-5 w-5" />
           </span>
-          {article.total_likes} Likes
+          {articleDetail.total_likes} Likes
         </button>
         <button
-          className="flex items-center gap-2 px-2 py-1 text-gray-600 hover:text-blue-600 bg-transparent rounded transition focus:outline-none"
+          className={`flex items-center gap-2 px-2 py-1 bg-transparent rounded transition focus:outline-none text-gray-600 hover:text-blue-600`}
           onClick={() => setShowComments((prev) => !prev)}
         >
           <span>
@@ -169,11 +148,11 @@ const ArticleDetail = () => {
       </div>
       {showComments && (
         <CommentSection
-          comments={article.comments}
-          articleSlug={article.slug}
-          articleId={article.id}
+          comments={articleDetail.comments}
+          articleSlug={articleDetail.slug}
+          articleId={articleDetail.id}
           onSubmit={loadArticle}
-          articleOwnerId={article.author.id}
+          articleOwnerId={articleDetail.author.id}
         />
       )}
     </div>
