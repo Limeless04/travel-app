@@ -56,7 +56,7 @@ NODE_ENV=development
 JWT_SECRET=your_jwt_secret
 
 # Frontend Configuration
-REACT_APP_API_URL=http://localhost:3000
+REACT_APP_API_URL=http://localhost:3001
 ```
 
 ### 3. Running the Application
@@ -77,7 +77,7 @@ podman compose --file docker-compose.yml --detach
 This will start:
 
 - PostgreSQL database on port 5432
-- NestJS API on port 3000
+- NestJS API on port 3001
 - React frontend on port 80
 
 To view the logs:
@@ -86,7 +86,8 @@ To view the logs:
 docker-compose logs -f
 ```
 
-Run this to populate postgres with dummy data for development only
+
+Run this to populate postgres with dummy data on development you can run this
 
 ```bash
 docker-compose exec nestjs-api npm run seed
@@ -96,7 +97,8 @@ docker-compose exec nestjs-api npm run seed
 
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:3001
-- API Documentation: http://localhost:3000/api/docs (if Swagger is enabled)
+- API Documentation: http://localhost:3001/api/docs (if Swagger is enabled)
+
 
 ### 5. Development Workflow
 

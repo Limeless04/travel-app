@@ -25,23 +25,24 @@ services:
       DB_PASS: password
       DB_NAME: mydb
       JWT_SECRET: supersecret
-      JWT_EXPIRES_IN:  3600s
-      CORS_ORIGIN:  http://localhost
+      JWT_EXPIRES_IN: 3600s
+      CORS_ORIGIN: http://localhost:5173
+      NODE_END: production
+      PORT: 3001
     ports:
-      - "3000:3000"
-
+      - "3001:3001"
 
   frontend:
-    build: 
+    build:
       context: ./travel-app
       args:
-          VITE_API_URL: http://localhost:3000
+        VITE_API_URL: http://localhost:3001
     container_name: vite-react
     restart: always
     depends_on:
       - backend
     ports:
-      - "80:80"
+      - "5173:80"
 
 volumes:
   pgdata:
