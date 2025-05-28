@@ -38,11 +38,6 @@ export class CommentService {
       limit: limit,
     };
   }
-
-  async findOne(id: number): Promise<Comment | null> {
-    return this.commentRepository.findOneBy({ id });
-  }
-
   async findByArticleCommentBySlug(slug: string): Promise<Comment[]> {
     const article = await this.articleRepository.findOne({
       where: { slug },
@@ -109,7 +104,6 @@ export class CommentService {
     slug: string,
     updateCommentDto: UpdateCommentDto,
   ): Promise<Comment | null> {
-    const { content } = updateCommentDto;
     const comment = await this.findBySlugAndId(slug, id);
 
     if (!comment) {

@@ -1,8 +1,28 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Query, ParseIntPipe, DefaultValuePipe, UsePipes, ValidationPipe} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  Query,
+  ParseIntPipe,
+  DefaultValuePipe,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { JwtAuthGuard } from 'src/guard/jwt-auth.guard';
 import { CreateCommentDto, UpdateCommentDto } from './comment-dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 
 @ApiTags('comments')
 @ApiBearerAuth()
@@ -42,13 +62,13 @@ export class CommentController {
     return this.commentService.findAll(page, limit);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get comment by ID' })
-  @ApiResponse({ status: 200, description: 'Return comment by ID.' })
-  @ApiResponse({ status: 404, description: 'Comment not found.' })
-  findOne(@Param('id') id: string) {
-    return this.commentService.findOne(Number(id));
-  }
+  // @Get(':id')
+  // @ApiOperation({ summary: 'Get comment by ID' })
+  // @ApiResponse({ status: 200, description: 'Return comment by ID.' })
+  // @ApiResponse({ status: 404, description: 'Comment not found.' })
+  // findOne(@Param('id') id: string) {
+  //   return this.commentService.findOne(Number(id));
+  // }
 
   @Get(':id/article/:slug')
   @UsePipes(new ValidationPipe({ transform: true }))

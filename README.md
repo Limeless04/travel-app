@@ -132,6 +132,8 @@ docker-compose down -v
 
 ### Common Issues
 
+When launching the application using Docker, it's common to observe a brief delay before the frontend becomes fully functional. This is because the backend services, which the frontend relies on for data and operations, might take a few moments to initialize and become available within their respective Docker containers. During this brief startup period, if the frontend attempts to communicate with an unready backend, you will likely encounter "Network Error" messages in your browser or application logs. Please allow a few seconds for all services to start up completely before interacting with the frontend.
+
 1. **Port Conflicts**
 
    - If port 80 is already in use, modify the frontend port in docker-compose.yml

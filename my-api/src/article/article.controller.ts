@@ -101,14 +101,14 @@ export class ArticleController {
     return this.articleService.findBySlug(slug);
   }
 
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Get article by ID' })
-  @ApiResponse({ status: 200, description: 'Return article by ID.' })
-  @ApiResponse({ status: 404, description: 'Article not found.' })
-  async findOne(@Param('id') id: string) {
-    return this.articleService.findOne(Number(id));
-  }
+  // @Get(':id')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiOperation({ summary: 'Get article by ID' })
+  // @ApiResponse({ status: 200, description: 'Return article by ID.' })
+  // @ApiResponse({ status: 404, description: 'Article not found.' })
+  // async findOne(@Param('id') id: string) {
+  //   return this.articleService.findOne(Number(id));
+  // }
 
   @Put(':slug')
   @UseGuards(JwtAuthGuard)
