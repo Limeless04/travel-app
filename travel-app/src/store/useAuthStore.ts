@@ -28,8 +28,6 @@ interface AuthActions {
     password: string
   ) => Promise<{ success: boolean }>;
   clearMessages: () => void;
-  showSessionExpiredModal: () => void;
-  hideSessionExpiredModal: () => void;
   handleSessionExpired: () => void;
 }
 
@@ -123,14 +121,6 @@ export const useAuthStore = create<AuthStore>()(
       clearMessages: () => {
         set({ error: null, message: null });
       },
-      showSessionExpiredModal: () => {
-        set({ isSessionExpiredModalOpen: true });
-      },
-
-      hideSessionExpiredModal: () => {
-        set({ isSessionExpiredModalOpen: false });
-      },
-
       handleSessionExpired: () => {
         // Clear user data and show modal
         set({

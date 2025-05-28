@@ -8,7 +8,7 @@ import { AiOutlineLike } from "react-icons/ai";
 import { FaRegCommentDots } from "react-icons/fa";
 import { apiClient } from "../../lib/axios/client";
 import { useArticleStore } from "../../store/useArticleStore";
-import type { ArticleDetail } from "../../store/useArticleStore";
+import type { ArticleDetailState } from "../../store/useArticleStore";
 
 type likeStatus = {
   like: boolean;
@@ -117,21 +117,18 @@ const ArticleDetail = () => {
         <span className="hidden sm:inline">|</span>
         <span>{articleDetail.author?.email || "No email"}</span>
         <span className="hidden sm:inline">•</span>
-        {
-          articleDetail.createdAt &&
-          (
-            <span>{new Date(articleDetail.createdAt).toLocaleDateString()}</span>
-          )
-        }
-
+        {articleDetail.createdAt && (
+          <span>{new Date(articleDetail.createdAt).toLocaleDateString()}</span>
+        )}
       </div>
       <p className="text-gray-700 leading-relaxed whitespace-pre-line mb-4">
         {articleDetail.content}
       </p>
       <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
         <button
-          className={`flex items-center gap-2 px-2 py-1 bg-transparent rounded transition focus:outline-none   hover:text-red-600 ${likeStatus.like ? "text-red-600" : "text-gray-600"
-            }`}
+          className={`flex items-center gap-2 px-2 py-1 bg-transparent rounded transition focus:outline-none   hover:text-red-600 ${
+            likeStatus.like ? "text-red-600" : "text-gray-600"
+          }`}
           type="button"
           onClick={handleLikes}
         >
@@ -148,7 +145,8 @@ const ArticleDetail = () => {
             <FaRegCommentDots className="h-5 w-5" />
           </span>
           {showComments ? "Hide Comments" : "Show Comments"}
-        </button> </div>
+        </button>{" "}
+      </div>
       {showComments && articleDetail.comments && (
         <CommentSection
           comments={articleDetail.comments}
@@ -164,7 +162,7 @@ const ArticleDetail = () => {
 async function fetchBySlug(
   slug: string | undefined,
   user: User | null
-): Promise<ArticleDetail | null> {
+): Promise<ArticleDetailState | null> {
   if (!slug) return null;
 
   try {
