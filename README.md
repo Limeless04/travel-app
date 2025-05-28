@@ -6,9 +6,11 @@ This repository contains a full-stack travel blog application consisting of a Ne
 
 The application consists of three main components:
 
-1. **Frontend (travel-app)**: A React application built with TypeScript and Vite
-2. **Backend API (my-api)**: A NestJS API that handles data persistence and business logic
-3. **Database**: PostgreSQL database for data storage
+1. **Frontend (travel-app)**
+   A React application built with TypeScript and Vite. you can read more detail on the READM.md
+3. **Backend API (my-api)**
+   A NestJS API that handles data persistence and business logic. you can read more detail on the READM.md
+5. **Database**: PostgreSQL database for data storage
 
 ## ScreenShots
 
