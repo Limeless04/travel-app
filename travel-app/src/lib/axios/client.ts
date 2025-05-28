@@ -22,7 +22,7 @@ const addAuthToken = (config: any) => {
 };
 
 // Add interceptors to both clients
-[apiClient, authClient].forEach((client) => {
+[apiClient].forEach((client) => {
   client.interceptors.request.use(addAuthToken, (error) =>
     Promise.reject(error)
   );
