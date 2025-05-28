@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/bdf7809a-39d2-41dc-aa24-8c3055ef6615)# Travel Blog Full Stack Application
+![image](https://github.com/user-attachments/assets/9edbd080-fcdb-4ecf-a02e-919def92db61)![image](https://github.com/user-attachments/assets/1f89ce6b-4631-4432-b726-062010bedfb3)![image](https://github.com/user-attachments/assets/bdf7809a-39d2-41dc-aa24-8c3055ef6615)# Travel Blog Full Stack Application
 
 This repository contains a full-stack travel blog application consisting of a NestJS backend API and a React frontend application. The entire stack can be run using Docker Compose for easy development and deployment.
 
@@ -13,15 +13,15 @@ The application consists of three main components:
 ## ScreenShots
 
 1. Homepage
-   ![homepage](https://github.com/user-attachments/assets/f1da9ccd-9194-4c35-a93f-7d6151ab83e4)
-2. Login Page
-   ![login](https://github.com/user-attachments/assets/8f05f577-3ba0-4b82-8658-fba7f5a2e1ad)
-3. Registration Page
-   ![registration](https://github.com/user-attachments/assets/e6cb9663-1869-41cf-ac22-d79ac17eb708)
-4. Homepage (Authenticated)
+   ![homepage](https://github.com/user-attachments/assets/64f1ae1e-d201-4b47-9b81-8ad959c361d3)
+3. Login Page
+   ![login](https://github.com/user-attachments/assets/722a7822-649c-4539-bfe3-dcdc45e7b8e1)
+5. Registration Page
+   ![registration](https://github.com/user-attachments/assets/6be21328-078c-4212-b0d4-447d5d7cbcfc)
+6. Homepage (Authenticated)
    ![homepage(auth)](https://github.com/user-attachments/assets/98fab216-04ff-42f0-896b-e803654dc037)
-5. Article Detail
-   ![articledetail](https://github.com/user-attachments/assets/51e1050c-f401-4789-bbff-a338a6d21ac7)
+7. Article Detail
+   ![articledetail](https://github.com/user-attachments/assets/e08807c4-0b23-4979-93f9-3b63469f8245)
 
 
 ## Prerequisites
