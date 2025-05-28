@@ -1,4 +1,4 @@
-# Travel Blog Full Stack Application
+![image](https://github.com/user-attachments/assets/bdf7809a-39d2-41dc-aa24-8c3055ef6615)# Travel Blog Full Stack Application
 
 This repository contains a full-stack travel blog application consisting of a NestJS backend API and a React frontend application. The entire stack can be run using Docker Compose for easy development and deployment.
 
@@ -9,6 +9,20 @@ The application consists of three main components:
 1. **Frontend (travel-app)**: A React application built with TypeScript and Vite
 2. **Backend API (my-api)**: A NestJS API that handles data persistence and business logic
 3. **Database**: PostgreSQL database for data storage
+
+## ScreenShots
+
+1. Homepage
+   ![homepage](https://github.com/user-attachments/assets/f1da9ccd-9194-4c35-a93f-7d6151ab83e4)
+2. Login Page
+   ![login](https://github.com/user-attachments/assets/8f05f577-3ba0-4b82-8658-fba7f5a2e1ad)
+3. Registration Page
+   ![registration](https://github.com/user-attachments/assets/e6cb9663-1869-41cf-ac22-d79ac17eb708)
+4. Homepage (Authenticated)
+   ![homepage(auth)](https://github.com/user-attachments/assets/98fab216-04ff-42f0-896b-e803654dc037)
+5. Article Detail
+   ![articledetail](https://github.com/user-attachments/assets/51e1050c-f401-4789-bbff-a338a6d21ac7)
+
 
 ## Prerequisites
 
