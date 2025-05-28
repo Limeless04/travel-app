@@ -51,11 +51,11 @@ $ npm install
 Create a `.env` file in the root directory with the following variables:
 
 ```env
-DATABASE_HOST=your_database_host
-DATABASE_PORT=your_database_port
-DATABASE_USERNAME=your_database_username
-DATABASE_PASSWORD=your_database_password
-DATABASE_NAME=your_database_name
+DB_HOST=your_database_host
+DB_PORT=your_database_port
+DB_USERNAME=your_database_username
+DB_PASSWORD=your_database_password
+DB_NAME=your_database_name
 JWT_SECRET=your_jwt_secret
 ```
 
@@ -82,6 +82,7 @@ npm run seed
 ```
 
 ## Run tests
+For this app, i don't really setup the test
 
 ```bash
 # unit tests
@@ -105,18 +106,6 @@ The API provides the following main endpoints:
 
 For detailed API documentation, please refer to the API documentation in the `/docs` directory or run the application and visit the Swagger documentation at `/api`.
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
 ## Docker Support
 

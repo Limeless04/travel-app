@@ -6,9 +6,25 @@ This repository contains a full-stack travel blog application consisting of a Ne
 
 The application consists of three main components:
 
-1. **Frontend (travel-app)**: A React application built with TypeScript and Vite
-2. **Backend API (my-api)**: A NestJS API that handles data persistence and business logic
-3. **Database**: PostgreSQL database for data storage
+1. **Frontend (travel-app)**
+   A React application built with TypeScript and Vite. you can read more detail on the README.md
+3. **Backend API (my-api)**
+   A NestJS API that handles data persistence and business logic. you can read more detail on the README.md
+5. **Database**: PostgreSQL database for data storage
+
+## ScreenShots
+
+1. Homepage
+   ![homepage](https://github.com/user-attachments/assets/64f1ae1e-d201-4b47-9b81-8ad959c361d3)
+3. Login Page
+   ![login](https://github.com/user-attachments/assets/722a7822-649c-4539-bfe3-dcdc45e7b8e1)
+5. Registration Page
+   ![registration](https://github.com/user-attachments/assets/6be21328-078c-4212-b0d4-447d5d7cbcfc)
+6. Homepage (Authenticated)
+   ![homepage(auth)](https://github.com/user-attachments/assets/fe92fdaa-d534-4b74-bcc0-95372ddaa8c6)
+8. Article Detail
+   ![articledetail](https://github.com/user-attachments/assets/e08807c4-0b23-4979-93f9-3b63469f8245)
+
 
 ## Prerequisites
 
@@ -70,6 +86,7 @@ To view the logs:
 docker-compose logs -f
 ```
 
+
 Run this to populate postgres with dummy data on development you can run this
 
 ```bash
@@ -81,6 +98,7 @@ docker-compose exec nestjs-api npm run seed
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:3001
 - API Documentation: http://localhost:3001/api/docs (if Swagger is enabled)
+
 
 ### 5. Development Workflow
 
@@ -137,7 +155,8 @@ When launching the application using Docker, it's common to observe a brief dela
 1. **Port Conflicts**
 
    - If port 80 is already in use, modify the frontend port in docker-compose.yml
-   - If port 3000 is already in use, modify the backend port in docker-compose.yml
+   - If port 3001 is already in use, modify the backend port in docker-compose.yml
+   - If port 5432 is already in use, modify the postgres port in docker-compose.yml
 
 2. **Database Connection Issues**
 
@@ -145,7 +164,7 @@ When launching the application using Docker, it's common to observe a brief dela
    - Check database logs: `docker-compose logs postgres`
 
 3. **API Connection Issues**
-   - Verify the API is running: `docker-compose logs nestjs-api`
+   - Verify the API is running: `docker-compose logs backend`
    - Check if the frontend environment variables are correctly set
 
 ### Useful Commands
@@ -155,10 +174,10 @@ When launching the application using Docker, it's common to observe a brief dela
 docker-compose build
 
 # Rebuild a specific service
-docker-compose build nestjs-api
+docker-compose build frontend
 
 # View logs for a specific service
-docker-compose logs -f nestjs-api
+docker-compose logs -f frontend
 
 # Restart a specific service
 docker-compose restart nestjs-api
