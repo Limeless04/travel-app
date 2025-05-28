@@ -84,7 +84,7 @@ To view the logs:
 docker-compose logs -f
 ```
 
-Run this to populate postgres with dummy data
+Run this to populate postgres with dummy data for development only
 
 ```bash
 docker-compose exec nestjs-api npm run seed
