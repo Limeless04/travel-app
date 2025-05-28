@@ -19,8 +19,8 @@ The application consists of three main components:
 5. Registration Page
    ![registration](https://github.com/user-attachments/assets/6be21328-078c-4212-b0d4-447d5d7cbcfc)
 6. Homepage (Authenticated)
-   ![homepage(auth)](https://github.com/user-attachments/assets/98fab216-04ff-42f0-896b-e803654dc037)
-7. Article Detail
+   ![homepage(auth)](https://github.com/user-attachments/assets/fe92fdaa-d534-4b74-bcc0-95372ddaa8c6)
+8. Article Detail
    ![articledetail](https://github.com/user-attachments/assets/e08807c4-0b23-4979-93f9-3b63469f8245)
 
 
