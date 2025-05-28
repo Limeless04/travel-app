@@ -94,8 +94,8 @@ docker-compose exec nestjs-api npm run seed
 
 ### 4. Accessing the Applications
 
-- Frontend: http://localhost
-- Backend API: http://localhost:3000
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:3001
 - API Documentation: http://localhost:3000/api/docs (if Swagger is enabled)
 
 ### 5. Development Workflow
@@ -153,7 +153,8 @@ When launching the application using Docker, it's common to observe a brief dela
 1. **Port Conflicts**
 
    - If port 80 is already in use, modify the frontend port in docker-compose.yml
-   - If port 3000 is already in use, modify the backend port in docker-compose.yml
+   - If port 3001 is already in use, modify the backend port in docker-compose.yml
+   - If port 5432 is already in use, modify the postgres port in docker-compose.yml
 
 2. **Database Connection Issues**
 
@@ -161,7 +162,7 @@ When launching the application using Docker, it's common to observe a brief dela
    - Check database logs: `docker-compose logs postgres`
 
 3. **API Connection Issues**
-   - Verify the API is running: `docker-compose logs nestjs-api`
+   - Verify the API is running: `docker-compose logs backend`
    - Check if the frontend environment variables are correctly set
 
 ### Useful Commands
@@ -171,10 +172,10 @@ When launching the application using Docker, it's common to observe a brief dela
 docker-compose build
 
 # Rebuild a specific service
-docker-compose build nestjs-api
+docker-compose build frontend
 
 # View logs for a specific service
-docker-compose logs -f nestjs-api
+docker-compose logs -f frontend
 
 # Restart a specific service
 docker-compose restart nestjs-api
