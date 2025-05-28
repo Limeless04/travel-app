@@ -1,3 +1,5 @@
+import { FaExclamationTriangle } from "react-icons/fa";
+
 interface DeleteModalProps {
   open: boolean;
   title?: string;
@@ -16,9 +18,11 @@ const DeleteModal = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-[rgba(0,0,0,0.4)] flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 w-full max-w-md mx-4 sm:mx-0 shadow-lg text-center">
-        <span className="text-red-500 text-4xl mb-2">⚠️</span>
+        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+          <FaExclamationTriangle className="h-6 w-6 text-red-600" />
+        </div>
         <h2 className="text-2xl font-semibold mb-2 text-red-600">{title}</h2>
         <p className="mb-6 text-gray-700">{message}</p>
         <div className="flex justify-center gap-4">

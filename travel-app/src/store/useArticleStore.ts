@@ -22,7 +22,7 @@ export interface Likes {
   articleId: number;
 }
 
-export interface ArticleDetail {
+export interface ArticleDetailState {
   id: number;
   title: string;
   slug: string;
@@ -44,8 +44,8 @@ export interface ArticleDetail {
 interface ArticleStore {
   userArticles: ArticleCardProps[];
   articles: ArticleCardProps[];
-  articleDetail: Partial<ArticleDetail> | ArticleDetail | null,
-  setArticleDetail: (articleDetail: Partial<ArticleDetail> | null) => void;
+  articleDetail: Partial<ArticleDetailState> | ArticleDetailState | null;
+  setArticleDetail: (articleDetail: Partial<ArticleDetailState> | null) => void;
   setArticles: (articles: ArticleCardProps[]) => void;
   setUserArticles: (articles: ArticleCardProps[]) => void;
   clearArticles: () => void;

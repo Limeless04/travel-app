@@ -4,12 +4,12 @@ import Home from "../pages/Home.tsx";
 import About from "../pages/About.tsx";
 import NotFound from "../components/NotFound.tsx";
 import AuthLayout from "../pages/AuthLayout.tsx";
-import ArticleDetail from "../pages/Article/ArticleDetail.tsx";
 import ArticleNotFound from "../pages/Article/ArticleNotFound.tsx";
 import ArticleForm from "../pages/Article/ArticleForm.tsx";
 import Login from "../pages/auth/Login.tsx";
 import Register from "../pages/auth/Register.tsx";
-
+import ArticleDetail from "../pages/Article/ArticleDetail.tsx";
+import AuthGuard from "../components/auth/AuthGuard.tsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -26,27 +26,20 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "articles/*",
-        Component: ArticleNotFound,
-      },
-      {
-        path: "articles/:slug",
-        Component: ArticleDetail,
-      },
-      {
-        path: "articles/create",
-        Component: ArticleForm,
-      },
-      {
-        path: "articles/delete/:slug",
-        Component: ArticleForm,
-      },
-      {
-        path: "articles/update/:slug",
-        Component: ArticleForm,
+        path: "articles", // Parent route for articles
+        Component: AuthGuard,
+        children: [
+          { path: "create", Component: ArticleForm }, // articles/create
+          { path: ":slug", Component: ArticleDetail }, // articles/:slug
+          { path: "update/:slug", Component: ArticleForm }, // articles/update/:slug
+          { path: "delete/:slug", Component: ArticleForm }, // articles/delete/:slug
+          { path: "*", Component: ArticleNotFound }, // Catch-all for articles not found
+        ],
+        loader: () => {},
       },
     ],
   },
+
   {
     path: "*",
     Component: NotFound,

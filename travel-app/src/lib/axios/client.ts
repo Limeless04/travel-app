@@ -1,6 +1,7 @@
 // 2. Create axios instance with interceptor (axiosConfig.ts)
 import axios from "axios";
 import { useAuthStore } from "../../store/useAuthStore";
+import { redirectToLogin } from "../sessionExpired";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL + "/api", // For general endpoints
@@ -31,6 +32,7 @@ const addAuthToken = (config: any) => {
     (error) => {
       if (error.response?.status === 401) {
         const { handleSessionExpired } = useAuthStore.getState();
+        redirectToLogin();
         handleSessionExpired();
       }
       return Promise.reject(error);
