@@ -5,6 +5,7 @@ import { useArticleStore } from "../store/useArticleStore";
 import ArticleCardSkeleton from "./loading/ArticleSkeletonLaoding";
 import AlertModal from "./modal/AlertModal";
 import { useArticleData } from "../hook/useArticleData";
+import { useUserArticles } from "../hook/useUserArticles";
 
 interface BlogListProps {
   type: string;
@@ -12,20 +13,43 @@ interface BlogListProps {
 
 const BlogList = ({ type }: BlogListProps) => {
   const { articles, userArticles } = useArticleStore();
-  const [page, setPage] = useState(1);
+  const [allArticlePage, setAllArticlePage] = useState<number>(1);
+  const [userPage, setUserPage] = useState<number>(1);
   const {
-    loading,
-    error,
-    showAlert,
-    setShowAlert,
-    totalAllArticle,
-    totalUserArticle,
-    limit,
-  } = useArticleData({
-    page,
-  });
-  const currentArticles = (type === "user" ? userArticles : articles) || [];
-  const total = (type === "user" ? totalUserArticle : totalAllArticle) || 0;
+    loading: allLoading,
+    error: allError,
+    showAlert: allAlert,
+    totalAllArticle = 0,
+    limit: allLimit,
+
+    setShowAlert: allArticlesShowAlert,
+  } = useArticleData({ page: allArticlePage });
+
+  const {
+    loading: userLoading,
+    error: userError,
+    showAlert: userAlert,
+    totalUserArticle = 0,
+    limit: userLimit,
+    setShowAlert: onlyUserShowAlert,
+  } = useUserArticles({ page: userPage });
+  const setShowAlert =
+    type === "user" ? onlyUserShowAlert : allArticlesShowAlert;
+  const currentArticles = type === "user" ? userArticles : articles;
+  const total = type === "user" ? totalUserArticle : totalAllArticle;
+  const loading = type === "user" ? userLoading : allLoading;
+  const error = type === "user" ? userError : allError;
+  const showAlert = type === "user" ? userAlert : allAlert;
+  const limit = type === "user" ? userLimit : allLimit;
+  const page = type === "user" ? userPage : allArticlePage;
+
+  const handleSetPage = (pageNumber: number) => {
+    if (type === "user") {
+      setUserPage(pageNumber);
+    } else {
+      setAllArticlePage(pageNumber);
+    }
+  };
 
   return (
     <div className="p-4">
@@ -35,7 +59,7 @@ const BlogList = ({ type }: BlogListProps) => {
             open={showAlert}
             onClose={() => setShowAlert(false)}
             type="failed"
-            message={error}
+            message={error?.message || "Un unexpected error occured"}
           />
         )}
         {loading ? (
@@ -68,7 +92,7 @@ const BlogList = ({ type }: BlogListProps) => {
           <Pagination
             current={page}
             total={Math.ceil(total / limit)}
-            onPageChange={(p) => setPage(p)}
+            onPageChange={(p) => handleSetPage(p)}
           />
         </div>
       )}

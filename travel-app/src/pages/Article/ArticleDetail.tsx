@@ -49,14 +49,14 @@ const ArticleDetail = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [slug, user, setArticleDetail]);
 
   const handleLikes = async () => {
     if (!articleDetail || !user) return;
     try {
       setLoading(true);
       const response = await apiClient.post(
-        `/articles/${slug}/like/${user.id}`
+        `/articles/${slug}/like/${user.id}`,
       );
       if (response.status === 201) {
         setLikeStatus({
@@ -161,7 +161,7 @@ const ArticleDetail = () => {
 };
 async function fetchBySlug(
   slug: string | undefined,
-  user: User | null
+  user: User | null,
 ): Promise<ArticleDetailState | null> {
   if (!slug) return null;
 

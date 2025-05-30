@@ -1,8 +1,7 @@
-import { useState, useCallback, useEffect } from "react";
-import { apiClient } from "../lib/axios/client";
+import { useState, useEffect } from "react";
 import { useArticleStore } from "../store/useArticleStore";
-import { useAuthStore } from "../store/useAuthStore";
-
+import useSWR from "swr";
+import fetcher from "../lib/axios/fetcher";
 interface UseFetchArticlesProps {
   page: number;
 }
@@ -10,65 +9,31 @@ interface UseFetchArticlesProps {
 const LIMIT = 4;
 
 export function useArticleData({ page }: UseFetchArticlesProps) {
-  const { setArticles, setUserArticles } = useArticleStore();
-  const { user } = useAuthStore();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const setArticles = useArticleStore((state) => state.setArticles);
   const [showAlert, setShowAlert] = useState(false);
   const [totalAllArticle, setTotalAllArticle] = useState<number>(0);
-  const [totalUserArticle, setTotalUserArticle] = useState<number>(0);
 
-  const fetchArticles = useCallback(async () => {
-    setLoading(true);
-    try {
-      const url = `/articles?limit=${LIMIT}&page=${page}`;
-      const { data } = await apiClient.get(url);
-      setArticles(data.data);
-      setTotalAllArticle(data.total);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      setError(message);
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 2000);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, setArticles]);
-
-  const fetchArticlesByUser = useCallback(async () => {
-    setLoading(true);
-    try {
-      const { data } = await apiClient.get(
-        `/articles/?limit=${LIMIT}&page=${page}&user_id=${user?.id}`
-      );
-      setUserArticles(data.data);
-      setTotalUserArticle(data.total);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      setError(message);
-      setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 2000);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, user?.id, setUserArticles]);
+  const {
+    data,
+    error,
+    isLoading: loading,
+  } = useSWR(`articles?limit=${LIMIT}&page=${page}`, fetcher);
 
   useEffect(() => {
-    fetchArticles();
-    if (user?.id) {
-      fetchArticlesByUser();
+    if (data) {
+      setArticles(data.data);
+      setTotalAllArticle(data.total);
     }
-  }, [fetchArticles, fetchArticlesByUser, user?.id]);
+
+    if (error) setShowAlert(true);
+  }, [data, error, setArticles, setTotalAllArticle, setShowAlert]);
 
   return {
-    fetchArticles,
-    fetchArticlesByUser,
     setShowAlert,
     loading,
     error,
     showAlert,
     totalAllArticle,
-    totalUserArticle,
     limit: LIMIT,
   };
 }

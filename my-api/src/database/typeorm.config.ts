@@ -13,7 +13,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT || '5432'),
   username: process.env.DB_USER,
-  password: process.env.DB_PASS,
+  password: process.env.DB_PASS?.toString(),
   database: process.env.DB_NAME,
   entities: [Users, Article, Comment, Likes],
   synchronize: process.env.NODE_ENV !== 'production',

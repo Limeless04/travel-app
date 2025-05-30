@@ -6,8 +6,7 @@ import { FiTrash2, FiEdit } from "react-icons/fi";
 import type { Author } from "../store/useArticleStore";
 import { apiClient } from "../lib/axios/client";
 import DeleteModal from "./modal/DeleteModal";
-import { useArticleData } from "../hook/useArticleData";
-
+import { mutate } from "swr";
 type ArticleCardProps = {
   title: string;
   summary: string;
@@ -33,7 +32,7 @@ const ArticleCard = ({
   const [loading, setLoading] = useState(false); // Consider managing loading state for this card's specific actions
   const canDelete = user && author && user.id === Number(author.id);
 
-  const { fetchArticles, fetchArticlesByUser } = useArticleData({ page: 1 });
+  // const { fetchArticles, fetchArticlesByUser } = useArticleData({ page: 1 });
 
   const handleReadMore = () => {
     if (isAuthenticated) {
@@ -54,8 +53,12 @@ const ArticleCard = ({
       const res = await apiClient.delete(`/articles/${slug}`);
       if (res.status === 200) {
         setShowDeleteModal(false);
-        fetchArticles();
-        fetchArticlesByUser();
+
+        mutate(
+          (key) => typeof key === "string" && key.startsWith("articles?limit="),
+        );
+
+        mutate((key) => typeof key === "string" && key.includes("&user_id="));
       } else {
         throw new Error("Failed to delete the article.");
       }
