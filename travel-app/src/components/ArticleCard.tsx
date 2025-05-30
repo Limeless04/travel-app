@@ -54,9 +54,7 @@ const ArticleCard = ({
       if (res.status === 200) {
         setShowDeleteModal(false);
 
-        mutate(
-          (key) => typeof key === "string" && key.startsWith("articles?limit="),
-        );
+        mutate("/articles");
 
         mutate((key) => typeof key === "string" && key.includes("&user_id="));
       } else {
