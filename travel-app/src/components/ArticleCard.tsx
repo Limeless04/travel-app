@@ -32,8 +32,6 @@ const ArticleCard = ({
   const [loading, setLoading] = useState(false); // Consider managing loading state for this card's specific actions
   const canDelete = user && author && user.id === Number(author.id);
 
-  // const { fetchArticles, fetchArticlesByUser } = useArticleData({ page: 1 });
-
   const handleReadMore = () => {
     if (isAuthenticated) {
       navigate(`/articles/${slug}`); // No need for replace: true unless specifically desired
@@ -54,10 +52,7 @@ const ArticleCard = ({
       if (res.status === 200) {
         setShowDeleteModal(false);
 
-        mutate(
-          (key) => typeof key === "string" && key.startsWith("articles?limit="),
-        );
-
+        mutate("/articles");
         mutate((key) => typeof key === "string" && key.includes("&user_id="));
       } else {
         throw new Error("Failed to delete the article.");
