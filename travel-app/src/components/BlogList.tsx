@@ -13,7 +13,8 @@ interface BlogListProps {
 
 const BlogList = ({ type }: BlogListProps) => {
   const { articles, userArticles } = useArticleStore();
-  const [page, setPage] = useState(1);
+  const [allArticlePage, setAllArticlePage] = useState<number>(1);
+  const [userPage, setUserPage] = useState<number>(1);
   const {
     loading: allLoading,
     error: allError,
@@ -22,7 +23,7 @@ const BlogList = ({ type }: BlogListProps) => {
     limit: allLimit,
 
     setShowAlert: allArticlesShowAlert,
-  } = useArticleData({ page });
+  } = useArticleData({ page: allArticlePage });
 
   const {
     loading: userLoading,
@@ -31,7 +32,7 @@ const BlogList = ({ type }: BlogListProps) => {
     totalUserArticle = 0,
     limit: userLimit,
     setShowAlert: onlyUserShowAlert,
-  } = useUserArticles({ page });
+  } = useUserArticles({ page: userPage });
   const setShowAlert =
     type === "user" ? onlyUserShowAlert : allArticlesShowAlert;
   const currentArticles = type === "user" ? userArticles : articles;
@@ -40,6 +41,16 @@ const BlogList = ({ type }: BlogListProps) => {
   const error = type === "user" ? userError : allError;
   const showAlert = type === "user" ? userAlert : allAlert;
   const limit = type === "user" ? userLimit : allLimit;
+  const page = type === "user" ? userPage : allArticlePage;
+
+  const handleSetPage = (pageNumber: number) => {
+    if (type === "user") {
+      setUserPage(pageNumber);
+    } else {
+      setAllArticlePage(pageNumber);
+    }
+  };
+
   return (
     <div className="p-4">
       <div className="grid gap-4 md:grid-cols-2">
@@ -81,7 +92,7 @@ const BlogList = ({ type }: BlogListProps) => {
           <Pagination
             current={page}
             total={Math.ceil(total / limit)}
-            onPageChange={(p) => setPage(p)}
+            onPageChange={(p) => handleSetPage(p)}
           />
         </div>
       )}
