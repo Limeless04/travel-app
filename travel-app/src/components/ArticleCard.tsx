@@ -32,8 +32,6 @@ const ArticleCard = ({
   const [loading, setLoading] = useState(false); // Consider managing loading state for this card's specific actions
   const canDelete = user && author && user.id === Number(author.id);
 
-  // const { fetchArticles, fetchArticlesByUser } = useArticleData({ page: 1 });
-
   const handleReadMore = () => {
     if (isAuthenticated) {
       navigate(`/articles/${slug}`); // No need for replace: true unless specifically desired
