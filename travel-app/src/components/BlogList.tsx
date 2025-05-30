@@ -5,6 +5,7 @@ import { useArticleStore } from "../store/useArticleStore";
 import ArticleCardSkeleton from "./loading/ArticleSkeletonLaoding";
 import AlertModal from "./modal/AlertModal";
 import { useArticleData } from "../hook/useArticleData";
+import { useUserArticles } from "../hook/useUserArticles";
 
 interface BlogListProps {
   type: string;
@@ -14,18 +15,31 @@ const BlogList = ({ type }: BlogListProps) => {
   const { articles, userArticles } = useArticleStore();
   const [page, setPage] = useState(1);
   const {
-    loading,
-    error,
-    showAlert,
-    setShowAlert,
-    totalAllArticle,
-    totalUserArticle,
-    limit,
-  } = useArticleData({
-    page,
-  });
-  const currentArticles = (type === "user" ? userArticles : articles) || [];
-  const total = (type === "user" ? totalUserArticle : totalAllArticle) || 0;
+    loading: allLoading,
+    error: allError,
+    showAlert: allAlert,
+    totalAllArticle = 0,
+    limit: allLimit,
+
+    setShowAlert: allArticlesShowAlert,
+  } = useArticleData({ page });
+
+  const {
+    loading: userLoading,
+    error: userError,
+    showAlert: userAlert,
+    totalUserArticle = 0,
+    limit: userLimit,
+    setShowAlert: onlyUserShowAlert,
+  } = useUserArticles({ page });
+  const setShowAlert =
+    type === "user" ? onlyUserShowAlert : allArticlesShowAlert;
+  const currentArticles = type === "user" ? userArticles : articles;
+  const total = type === "user" ? totalUserArticle : totalAllArticle;
+  const loading = type === "user" ? userLoading : allLoading;
+  const error = type === "user" ? userError : allError;
+  const showAlert = type === "user" ? userAlert : allAlert;
+  const limit = type === "user" ? userLimit : allLimit;
 
   return (
     <div className="p-4">
