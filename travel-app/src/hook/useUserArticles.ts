@@ -29,7 +29,7 @@ export function useUserArticles({ page }: UseFetchArticlesProps) {
 
   useEffect(() => {
     if (data) {
-      setUserArticles(data);
+      setUserArticles(data.data);
       setTotalUserArticle(data.total);
     }
 

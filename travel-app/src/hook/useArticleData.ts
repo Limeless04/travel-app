@@ -21,7 +21,7 @@ export function useArticleData({ page }: UseFetchArticlesProps) {
 
   useEffect(() => {
     if (data) {
-      setArticles(data);
+      setArticles(data.data);
       setTotalAllArticle(data.total);
     }
 
