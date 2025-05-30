@@ -29,7 +29,6 @@ export function useArticleData({ page }: UseFetchArticlesProps) {
   }, [data, error, setArticles, setTotalAllArticle, setShowAlert]);
 
   return {
-    data,
     setShowAlert,
     loading,
     error,

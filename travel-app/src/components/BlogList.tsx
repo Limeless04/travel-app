@@ -40,7 +40,6 @@ const BlogList = ({ type }: BlogListProps) => {
   const error = type === "user" ? userError : allError;
   const showAlert = type === "user" ? userAlert : allAlert;
   const limit = type === "user" ? userLimit : allLimit;
-
   return (
     <div className="p-4">
       <div className="grid gap-4 md:grid-cols-2">
@@ -49,7 +48,7 @@ const BlogList = ({ type }: BlogListProps) => {
             open={showAlert}
             onClose={() => setShowAlert(false)}
             type="failed"
-            message={error}
+            message={error?.message || "Un unexpected error occured"}
           />
         )}
         {loading ? (
