@@ -55,7 +55,6 @@ const ArticleCard = ({
         setShowDeleteModal(false);
 
         mutate("/articles");
-
         mutate((key) => typeof key === "string" && key.includes("&user_id="));
       } else {
         throw new Error("Failed to delete the article.");
